@@ -1,24 +1,23 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div style={{ textAlign: 'center' }}>
+        <p style={{ fontSize: '10px' }}>안녕하세요10px</p>
+        <p style={{ fontSize: '15px' }}>안녕하세요15px</p>
+        <p style={{ fontSize: '20px' }}>안녕하세요20px</p>
+        <p style={{ fontSize: '25px' }}>안녕하세요25px</p>
+        <p style={{ fontSize: '30px' }}>안녕하세요30px</p>
+      </div>
+      <div style={{ textAlign: 'center',fontFamily:'굴림' }}>
+        <p style={{ fontSize: '10px' }}>안녕하세요10px</p>
+        <p style={{ fontSize: '15px' }}>안녕하세요15px</p>
+        <p style={{ fontSize: '20px' }}>안녕하세요20px</p>
+        <p style={{ fontSize: '25px' }}>안녕하세요25px</p>
+        <p style={{ fontSize: '30px' }}>안녕하세요30px</p>
+      </div>
+      안녕하세요 잉크링크입미다.
     </div>
   );
 }
