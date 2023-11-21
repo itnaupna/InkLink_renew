@@ -1,10 +1,16 @@
 body {
   margin: 0;
   font-family: 'Dongle', sans-serif;
-  font-size: 25px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-image: url('https://cnwtybrajiqf.objectstorage.ap-seoul-1.oci.customer-oci.com/n/cnwtybrajiqf/b/Inklink/o/bg.png');
-  /* background-size: ; */
   background-repeat: repeat;
+}
+
+html {
+  font-size: 10px;
+}
+
+div {
+  box-sizing: border-box;
 }
