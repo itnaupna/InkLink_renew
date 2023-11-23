@@ -1,0 +1,10 @@
+.Wrapper{
+    width:200px;
+    max-height: 600px;
+    flex-direction: column;
+    gap:10px;
+    align-self: stretch;
+    overflow-y: auto;
+    /* scrollbar-gutter: stable; */
+    justify-content: start !important;
+}

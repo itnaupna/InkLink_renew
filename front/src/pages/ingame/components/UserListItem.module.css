@@ -1,0 +1,17 @@
+.Wrapper{
+    height:48px;
+    align-self: stretch;
+    background-color: #eee;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.infoWrapper{
+    flex: 1 0 0;
+    flex-direction: column;
+    font-size: 1.7rem;
+    font-weight: bolder;
+    border-left: 1px solid #ccc;
+}
+.allScore{
+    margin-right: 0.5rem;
+}

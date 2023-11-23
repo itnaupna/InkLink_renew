@@ -5,6 +5,7 @@ import RegisterBox from './components/RegisterBox';
 import FindIdBox from './components/FindIdBox';
 import ResetPwBox from './components/ResetPwBox';
 const Login = () => {
+    const imgPrefix = process.env.REACT_APP_BUCKET_URL;
     const handleClickHeader = (e: React.MouseEvent<HTMLLIElement, MouseEvent>,i:number) => {
         document.querySelectorAll(`li.${style.selected}`).forEach(v => {
             v.classList.remove(`${style.selected}`);
@@ -17,10 +18,11 @@ const Login = () => {
             top:0
         });
     }
+
     return (
         <div className={`${style.root}`}>
             <div>
-                <img src='https://cnwtybrajiqf.objectstorage.ap-seoul-1.oci.customer-oci.com/n/cnwtybrajiqf/b/Inklink/o/logo.png'
+                <img src={`${imgPrefix}logo.png`}
                     className={`${style.logo}`}
                     alt='logo'
                 />
