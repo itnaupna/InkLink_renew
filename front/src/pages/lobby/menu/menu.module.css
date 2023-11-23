@@ -108,7 +108,7 @@
   margin-right: 0.8rem;
 }
 
-@media screen and (max-width: 992px), screen and (max-height: 768px) {
+@media screen and (max-width: 992px), screen and (max-height: 932px) {
   .menu_options {
     display: none;
   }
@@ -122,5 +122,5 @@
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 840px) {
 }

@@ -6,7 +6,7 @@ function Profile() {
       <div className={style.close_btn}>
         <img alt="close-btn" src={process.env.REACT_APP_BUCKET_URL + 'icons/close_btn.svg'} />
       </div>
-      <div className={style.detail_box}>
+      <div className={style.detail_box_top}>
         <div className={style.detail}>
           <div className={style.profile_icon}>
             <div className={style.profile_icon_btn}>
