@@ -1,6 +1,7 @@
-/* header */
+/* Header */
 
 .header_bar {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,6 +41,8 @@
 }
 
 .menu_options div {
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }
 
@@ -47,15 +50,20 @@
   margin-right: 0.8rem;
 }
 
-.cash_point_box {
+.cash_point_box,
+.cash_point_box_mobile {
   display: flex;
   height: 4rem;
-  margin-right: 4rem;
+  margin-right: 2.8rem;
+}
+
+.cash_point_box_mobile {
+  margin-right: 0;
 }
 
 .cash_point_text {
   display: flex;
-  background-color: #eee;
+  background-color: #ffffff;
   border: 1px solid #222;
   border-right: none;
   border-radius: 8px 0 0 8px;
@@ -80,14 +88,79 @@
   cursor: pointer;
 }
 
+.cash_point_btn:hover {
+  background-color: #7070ff;
+}
+
 .cash_point_btn img {
   padding: 1rem 0 0 0.5rem;
   width: 2rem;
   height: 2rem;
 }
 
-/* footer */
+/* Mobile Menu */
+.mobile_menu_btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin-right: 4rem;
+  border-radius: 8px;
+  background-color: #8888ff;
+  cursor: pointer;
+}
 
+.mobile_menu_btn:hover {
+  background-color: #7070ff;
+}
+
+.mobile_menu_modal {
+  width: 100%;
+  z-index: 5;
+  background-color: #ffffff;
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  right: 0;
+  top: 100%;
+  list-style: none;
+  font-size: 3.2rem;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.mobile_menu_options,
+.mobile_menu_account {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 3rem;
+  border-top: 1px solid #eee;
+}
+
+.mobile_signout {
+  display: flex;
+}
+
+.mobile_menu_options,
+.mobile_signout {
+  cursor: pointer;
+}
+
+.mobile_menu_options:hover {
+  background-color: #eee;
+}
+
+.mobile_menu_options img,
+.mobile_signout img {
+  margin-right: 1.2rem;
+}
+
+.mobile_menu_account {
+  justify-content: space-between;
+}
+
+/* Footer */
 .footer_bar {
   position: absolute;
   bottom: 0;
@@ -101,6 +174,8 @@
 }
 
 .footer_bar div {
+  display: flex;
+  align-items: center;
   cursor: pointer;
 }
 
@@ -108,7 +183,11 @@
   margin-right: 0.8rem;
 }
 
-@media screen and (max-width: 992px), screen and (max-height: 932px) {
+@media screen and (max-width: 992px), screen and (max-height: 984px) {
+  .mobile_menu_btn {
+    display: flex;
+  }
+
   .menu_options {
     display: none;
   }
@@ -122,5 +201,12 @@
   }
 }
 
-@media screen and (max-width: 840px) {
+@media screen and (max-width: 576px) {
+  .profile_box {
+    margin-left: 2rem;
+  }
+
+  .mobile_menu_btn {
+    margin-right: 2rem;
+  }
 }

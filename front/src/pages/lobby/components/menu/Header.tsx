@@ -1,5 +1,5 @@
 import style from './menu.module.css';
-import { Desktop, Mobile } from '../index';
+import { Desktop, Mobile } from '../../index';
 
 function Header() {
   return (
@@ -13,7 +13,7 @@ function Header() {
           <p>점수:99999</p>
         </div>
       </div>
-      {/* <Desktop /> */}
+      <Desktop />
       <Mobile />
     </div>
   );

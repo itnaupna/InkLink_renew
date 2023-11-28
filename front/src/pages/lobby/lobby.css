@@ -4,3 +4,83 @@
   max-width: 1440px;
   margin: 0 auto;
 }
+
+/* Tips */
+.tip_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 5rem;
+  height: calc(100vh - 20rem);
+  background-color: #ffffff;
+}
+
+.tip_row {
+  display: flex;
+}
+
+.tip {
+  width: 30rem;
+  height: 30rem;
+  background-color: pink;
+  transform: rotate(-15deg);
+}
+
+.second {
+  margin-top: 10rem;
+  transform: rotate(15deg);
+}
+
+.third {
+  transform: rotate(0);
+}
+
+.tip_arrow {
+  margin: 0 5rem 10rem;
+  width: 20rem;
+}
+
+.tip_arrow img {
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (max-width: 992px), screen and (max-height: 984px) {
+  .tip {
+    width: 20rem;
+    height: 20rem;
+    background-color: green;
+  }
+
+  .tip_arrow {
+    margin: 2rem 5rem 10rem;
+    width: 20rem;
+  }
+}
+
+@media screen and (max-width: 768px), screen and (max-height: 768px) {
+  .tip {
+    width: 20rem;
+    height: 20rem;
+    background-color: black;
+  }
+
+  .tip_box {
+    justify-content: space-evenly;
+    width: 100%;
+    padding-top: 0rem;
+    height: calc(100vh - 10rem);
+    background-color: #ffffff;
+  }
+
+  .second {
+    margin-top: 0;
+    transform: rotate(15deg);
+  }
+
+  .third {
+    transform: rotate(-15deg);
+  }
+}

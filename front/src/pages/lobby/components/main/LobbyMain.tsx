@@ -1,10 +1,10 @@
 import MediaQuery from 'react-responsive';
-import { Notice, Profile, Chat, MemberList } from '../../index';
+import { Notice, Profile, Chat, MemberList, RoomList, ShopList, DrawingList } from '../../index';
 import style from './main.module.css';
 
 function LobbyMain() {
   return (
-    <div>
+    <>
       {/* <MediaQuery query="(min-width:841px) and (min-height:838px)">
         <div className={style.lobby_top}>
           <Profile />
@@ -15,7 +15,7 @@ function LobbyMain() {
           <MemberList />
         </div>
       </MediaQuery>
-      <MediaQuery query="(max-width:840px) or (max-height:837px)">
+      <MediaQuery query="(max-width:840.99px) or (max-height:837.99px)">
         <div className={style.m_auto}>
           <Notice />
         </div>
@@ -27,7 +27,10 @@ function LobbyMain() {
           <Chat />
         </div>
       </MediaQuery> */}
-    </div>
+      {/* <RoomList /> */}
+      {/* <ShopList /> */}
+      {/* <DrawingList /> */}
+    </>
   );
 }
 

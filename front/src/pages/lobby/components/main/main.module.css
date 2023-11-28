@@ -88,7 +88,7 @@
   justify-content: space-between;
 }
 
-/* profile */
+/* Profile */
 .profile_icon {
   display: flex;
   align-items: center;
@@ -130,7 +130,7 @@
   justify-content: center;
 }
 
-/* notice */
+/* Notice */
 .notice_window {
   display: flex;
   justify-content: space-between;
@@ -274,9 +274,11 @@
 }
 
 .chat_send_btn {
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #eee;
   border-radius: 0 8px 8px 0;
   width: 7rem;
   height: 4rem;
@@ -350,7 +352,7 @@
   }
 }
 
-@media screen and (max-width: 992px), screen and (max-height: 932px) {
+@media screen and (max-width: 992px), screen and (max-height: 984px) {
   .lobby_bottom {
     bottom: 0rem;
   }

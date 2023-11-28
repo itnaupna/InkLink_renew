@@ -1,4 +1,4 @@
-import style from '../menu.module.css';
+import style from './menu.module.css';
 
 function Desktop() {
   return (
@@ -13,7 +13,7 @@ function Desktop() {
           <span>오늘의 그림</span>
         </div>
         <div>
-          <img alt="shop" src={process.env.REACT_APP_BUCKET_URL + 'icons/shop_icon.svg'} />
+          <img alt="shop" src={process.env.REACT_APP_BUCKET_URL + 'icons/shop_icon3.svg'} />
           <span>상점</span>
         </div>
       </div>
