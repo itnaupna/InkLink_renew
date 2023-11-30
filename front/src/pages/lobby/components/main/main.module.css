@@ -50,6 +50,7 @@
 .lg_box {
   width: 100%;
   max-width: 990px;
+  /* max-width: calc(100% - 410px); */
 }
 
 .close_btn {

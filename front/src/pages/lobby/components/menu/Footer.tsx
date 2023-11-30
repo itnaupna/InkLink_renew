@@ -1,9 +1,15 @@
+import { useSetRecoilState } from 'recoil';
 import style from './menu.module.css';
+import { mainModal } from '../../../../recoil/lobby';
 
 function Footer() {
+  const setMain = useSetRecoilState(mainModal);
+
   return (
     <div className={style.footer_bar}>
-      <div>
+      <div onClick={() => {
+
+      }}>
         <img alt="profile" src={process.env.REACT_APP_BUCKET_URL + 'icons/profile_icon.svg'} />
         <span>프로필</span>
       </div>

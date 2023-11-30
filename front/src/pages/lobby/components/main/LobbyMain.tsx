@@ -27,7 +27,7 @@ function LobbyMain() {
           <Chat />
         </div>
       </MediaQuery> */}
-      {/* <RoomList /> */}
+      <RoomList />
       {/* <ShopList /> */}
       {/* <DrawingList /> */}
     </>

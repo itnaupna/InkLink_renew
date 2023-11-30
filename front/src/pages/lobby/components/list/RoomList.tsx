@@ -1,8 +1,22 @@
+import { useRecoilValue } from 'recoil';
 import style from './list.module.css';
+import { listModal } from '../../../../recoil/lobby';
+import { useEffect, useState } from 'react';
 
 function RoomList() {
+  const list = useRecoilValue(listModal);
+  const [visible, setVisible] = useState<string>('');
+  const room = list.room;
+
+  useEffect(() => {
+    console.log(room);
+    if (room) {
+      setVisible('show');
+    }
+  }, [room]);
+
   return (
-    <div className={style.list_box}>
+    <div className={`${style.list_box} ${visible}`}>
       <div className={style.list_window}>
         <div className={style.list_header}>
           <div className={style.list_btn_box}>
