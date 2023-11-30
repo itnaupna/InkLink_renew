@@ -17,8 +17,8 @@ function DrawingList() {
         </div>
         <div className={style.best_list}>
           <div className={style.best}>
-            <div>
-              <div className={style.best_item_text}>일이삼사오육칠팔구십일이님의 작품</div>
+            <div className={style.best_position}>
+              <div className={style.best_item_text}>1일이삼사오육칠팔구십일이님의 작품</div>
               <div className={style.best_item}>
                 <div className={style.best_item_img}>
                   <img alt="best_img" src={process.env.REACT_APP_BUCKET_URL + '2023Worlds.jpg'} />
@@ -33,8 +33,8 @@ function DrawingList() {
               </div>
               <div className={`${style.best_item_text} ${style.underline}`}>정답 : 일이삼사오육칠팔구십</div>
             </div>
-            <div>
-              <div className={style.best_item_text}>일이삼사오육칠팔구십일이님의 작품</div>
+            <div className={style.best_position}>
+              <div className={style.best_item_text}>2일이삼사오육칠팔구십일이님의 작품</div>
               <div className={style.best_item}>
                 <div className={style.best_item_img}>
                   <img alt="best_img" src={process.env.REACT_APP_BUCKET_URL + '2023Worlds.jpg'} />
@@ -49,8 +49,8 @@ function DrawingList() {
               </div>
               <div className={`${style.best_item_text} ${style.underline}`}>정답 : 일이삼사오육칠팔구십</div>
             </div>
-            <div>
-              <div className={style.best_item_text}>일이삼사오육칠팔구십일이님의 작품</div>
+            <div className={style.best_position}>
+              <div className={style.best_item_text}>3일이삼사오육칠팔구십일이님의 작품</div>
               <div className={style.best_item}>
                 <div className={style.best_item_img}>
                   <img alt="best_img" src={process.env.REACT_APP_BUCKET_URL + '2023Worlds.jpg'} />
