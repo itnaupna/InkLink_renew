@@ -1,14 +1,26 @@
-.show {
-  visibility: hidden;
-}
-
-.hide {
-}
-
 .list_box {
   padding: 2rem;
   background-color: rgba(34, 34, 34, 0.7);
   max-height: 824px;
+
+}
+
+.d_show {
+  display: block;
+}
+
+.d_hide {
+  display: none;
+}
+
+.fade_out {
+  opacity: 0;
+  transition: all 0.2s;
+}
+
+.fade_in {
+  opacity: 1;
+  transition: all 0.2s;
 }
 
 .list_window {

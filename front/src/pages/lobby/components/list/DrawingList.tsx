@@ -1,8 +1,20 @@
+import { useRecoilState } from 'recoil';
 import style from './list.module.css';
+import { listModal } from '../../../../recoil/lobby';
+import { useEffect, useState } from 'react';
+import { closeHandler, modalHandler } from './api/modal';
 
 function DrawingList() {
+  const [list, setList] = useRecoilState(listModal);
+  const [visible, setVisible] = useState<string>(style.d_hide);
+  const [fade, setFade] = useState<string>(style.fade_out);
+
+  useEffect(() => {
+    modalHandler(list.best, setVisible, setFade);
+  }, [list.best]);
+
   return (
-    <div className={style.list_box}>
+    <div className={`${style.list_box} ${visible} ${fade}`}>
       <div className={style.list_window}>
         <div className={style.list_header}>
           <div className={style.list_btn_box}>
@@ -13,6 +25,7 @@ function DrawingList() {
             className={style.close_btn}
             alt="close-btn"
             src={process.env.REACT_APP_BUCKET_URL + 'icons/close_btn_w.svg'}
+            onClick={() => closeHandler(list, 'best', setList, setFade)}
           />
         </div>
         <div className={style.best_list}>

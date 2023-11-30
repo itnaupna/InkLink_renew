@@ -1,22 +1,20 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import style from './list.module.css';
 import { listModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
+import { closeHandler, modalHandler } from './api/modal';
 
 function RoomList() {
-  const list = useRecoilValue(listModal);
-  const [visible, setVisible] = useState<string>('');
-  const room = list.room;
+  const [list, setList] = useRecoilState(listModal);
+  const [visible, setVisible] = useState<string>(style.d_hide);
+  const [fade, setFade] = useState<string>(style.fade_out);
 
   useEffect(() => {
-    console.log(room);
-    if (room) {
-      setVisible('show');
-    }
-  }, [room]);
+    modalHandler(list.room, setVisible, setFade);
+  }, [list.room]);
 
   return (
-    <div className={`${style.list_box} ${visible}`}>
+    <div className={`${style.list_box} ${visible} ${fade}`}>
       <div className={style.list_window}>
         <div className={style.list_header}>
           <div className={style.list_btn_box}>
@@ -27,6 +25,7 @@ function RoomList() {
             className={style.close_btn}
             alt="close-btn"
             src={process.env.REACT_APP_BUCKET_URL + 'icons/close_btn_w.svg'}
+            onClick={() => closeHandler(list, 'room', setList, setFade)}
           />
         </div>
         <div className={style.input_grp_gutter}>

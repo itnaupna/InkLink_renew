@@ -1,8 +1,18 @@
+import { useRecoilState } from 'recoil';
 import style from './main.module.css';
+import { mainModal } from '../../../../recoil/lobby';
+import { useEffect } from 'react';
 
 function Profile() {
+  const [main, setMain] = useRecoilState(mainModal);
+
+  useEffect(() => {
+    if (main.profile) {
+    }
+  }, [main.profile]);
+
   return (
-    <div className={`${style.sm_box} ${style.mr_1}`}>
+    <div style={{ visibility: 'hidden' }} className={`${style.sm_box} ${style.mr_1}`}>
       <div className={style.close_btn}>
         <img alt="close-btn" src={process.env.REACT_APP_BUCKET_URL + 'icons/close_btn.svg'} />
       </div>
