@@ -1,12 +1,77 @@
 .lobby {
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
+  height: 100%;
   max-width: 1440px;
   margin: 0 auto;
 }
 
+.lobby_main_box {
+  min-height: calc(100vh - 100px);
+  height: 100%;
+}
+
+/* Modals */
+.detail_modal_bg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  background-color: rgba(34, 34, 34, 0.7);
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  transition: all 0.3s;
+}
+
+.fade_in {
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.3s;
+}
+
+.detail_modal_box {
+  width: 100%;
+  max-width: 60rem;
+  padding: 2rem;
+}
+
+.detail_modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  animation-name: box_animation;
+  animation-duration: 0.4s;
+}
+
+.d_hide {
+  display: none;
+}
+
+@keyframes box_animation {
+  0% {
+    transform: scale(0);
+  }
+
+  75% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 /* Tips */
 .tip_box {
+  position: absolute;
+  z-index: -5;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,6 +122,10 @@
   .tip_arrow {
     margin: 2rem 5rem 10rem;
     width: 20rem;
+  }
+
+  .tip_box {
+    height: calc(100vh - 10rem);
   }
 }
 
