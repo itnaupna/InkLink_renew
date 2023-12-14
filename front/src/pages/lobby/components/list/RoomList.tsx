@@ -1,17 +1,23 @@
 import { useRecoilState } from 'recoil';
 import style from './list.module.css';
-import { listModal } from '../../../../recoil/lobby';
+import { listModal, mainModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
-import { closeHandler, modalHandler } from './api/modal';
+import { closeHandler, modalHandler } from '../../../../api/modal';
 
 function RoomList() {
   const [list, setList] = useRecoilState(listModal);
+  const [main, setMain] = useRecoilState(mainModal);
   const [visible, setVisible] = useState<string>(style.d_hide);
   const [fade, setFade] = useState<string>(style.fade_out);
 
   useEffect(() => {
-    modalHandler(list.room, setVisible, setFade);
+    modalHandler(style, list.room, setVisible, setFade);
   }, [list.room]);
+
+  const closeModal = () => {
+    setMain({ ...main, show: 0 });
+    closeHandler(style, list, 'best', setList, setFade);
+  };
 
   return (
     <div className={`${style.list_box} ${visible} ${fade}`}>
@@ -25,13 +31,13 @@ function RoomList() {
             className={style.close_btn}
             alt="close-btn"
             src={process.env.REACT_APP_BUCKET_URL + 'icons/close_btn_w.svg'}
-            onClick={() => closeHandler(list, 'room', setList, setFade)}
+            onClick={closeModal}
           />
         </div>
         <div className={style.input_grp_gutter}>
           <div className={style.input_group}>
             <img alt="search-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/search_icon.svg'} />
-            <input type="text" />
+            <input type="text" placeholder="방제목을 입력해주세요"/>
             <div className={style.search_btn}>방검색</div>
           </div>
         </div>

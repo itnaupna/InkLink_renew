@@ -7,6 +7,7 @@
   justify-content: space-between;
   height: 10rem;
   background-color: rgba(238, 238, 238, 0.7);
+  z-index: 5;
 }
 
 .profile_box {
@@ -116,6 +117,7 @@
 }
 
 .mobile_menu_modal {
+  display: none;
   width: 100%;
   z-index: 5;
   background-color: #ffffff;
@@ -128,6 +130,15 @@
   font-size: 3.2rem;
   visibility: hidden;
   opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.2s;
+  outline: 1px solid lightgray;
+}
+
+.mobile_fade_in {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .mobile_menu_options,
@@ -198,6 +209,10 @@
 
   .footer_bar {
     display: none;
+  }
+
+  .mobile_menu_modal {
+    display: block;
   }
 }
 

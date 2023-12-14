@@ -1,42 +1,36 @@
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import style from './menu.module.css';
-import { listModal } from '../../../../recoil/lobby';
+import { listModal, mainModal, shopTabHandler } from '../../../../recoil/lobby';
+import { listMenu } from '../../../../api/menu';
 
 function Desktop() {
   const setList = useSetRecoilState(listModal);
-  const listModalHandler = (type: string) => {
+  const [main, setMain] = useRecoilState(mainModal);
+  const setTab = useSetRecoilState(shopTabHandler);
+
+  const listMenuHandler = (type: string) => {
+    setMain({ ...main, show: 1 });
     let listData = { room: false, best: false, shop: false };
-
-    switch (type) {
-      case 'room':
-        listData.room = true;
-        setList(listData);
-        break;
-
-      case 'best':
-        listData.best = true;
-        setList(listData);
-        break;
-
-      case 'shop':
-        listData.shop = true;
-        setList(listData);
-        break;
-    }
+    listMenu(type, listData, setList);
   };
 
   return (
     <>
       <div className={style.menu_options}>
-        <div onClick={() => listModalHandler('room')}>
+        <div onClick={() => listMenuHandler('room')}>
           <img alt="room-list" src={process.env.REACT_APP_BUCKET_URL + 'icons/room_list_icon.svg'} />
           <span>방목록</span>
         </div>
-        <div onClick={() => listModalHandler('best')}>
+        <div onClick={() => listMenuHandler('best')}>
           <img alt="best-drawing" src={process.env.REACT_APP_BUCKET_URL + 'icons/best_icon.svg'} />
           <span>오늘의 그림</span>
         </div>
-        <div onClick={() => listModalHandler('shop')}>
+        <div
+          onClick={() => {
+            listMenuHandler('shop');
+            setTab(0);
+          }}
+        >
           <img alt="shop" src={process.env.REACT_APP_BUCKET_URL + 'icons/shop_icon3.svg'} />
           <span>상점</span>
         </div>
@@ -46,7 +40,13 @@ function Desktop() {
           <img alt="cash" src={process.env.REACT_APP_BUCKET_URL + 'icons/cash_icon.svg'} />
           <span>99999</span>
         </div>
-        <div className={style.cash_point_btn}>
+        <div
+          className={style.cash_point_btn}
+          onClick={() => {
+            listMenuHandler('shop');
+            setTab(1);
+          }}
+        >
           <img alt="cash-add" src={process.env.REACT_APP_BUCKET_URL + 'icons/cash_add_btn.svg'} />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { SetterOrUpdater } from 'recoil';
-import style from '../list.module.css';
 
 const modalHandler = (
+  style: { [key: string]: string },
   type: boolean,
   setVisible: React.Dispatch<React.SetStateAction<string>>,
   setFade: React.Dispatch<React.SetStateAction<string>>
@@ -23,14 +23,15 @@ const modalHandler = (
 };
 
 const closeHandler = (
-  list: ListType,
-  type: keyof ListType,
-  setList: SetterOrUpdater<ListType>,
+  style: { [key: string]: string },
+  modal: MainType | ListType,
+  type: keyof MainType | keyof ListType,
+  setState: SetterOrUpdater<any>,
   setFade: React.Dispatch<React.SetStateAction<string>>
 ) => {
   setFade(style.fade_out);
   let timer = setTimeout(() => {
-    setList({ ...list, [type]: false });
+    setState({ ...modal, [type]: false });
   }, 200);
 
   return () => {

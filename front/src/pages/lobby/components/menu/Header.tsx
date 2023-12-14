@@ -2,6 +2,7 @@ import style from './menu.module.css';
 import { Desktop, Mobile } from '../../index';
 
 function Header() {
+  
   return (
     <div className={style.header_bar}>
       <div className={style.profile_box}>

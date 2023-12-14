@@ -12,3 +12,6 @@ export { default as ShopList } from './components/list/ShopList';
 export { default as DrawingList } from './components/list/DrawingList';
 export { default as BgDesktop } from './components/bg/BgDesktop';
 export { default as BgMobile } from './components/bg/BgMobile';
+export { default as UserDetail } from './components/detail/UserDetail';
+export { default as NoticeDetail } from './components/detail/NoticeDetail';
+export { default as SignOut } from './components/detail/SignOut';

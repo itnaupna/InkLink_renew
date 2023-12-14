@@ -1,20 +1,26 @@
 import { useRecoilState } from 'recoil';
 import style from './main.module.css';
 import { mainModal } from '../../../../recoil/lobby';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { closeHandler, modalHandler } from '../../../../api/modal';
 
 function Profile() {
   const [main, setMain] = useRecoilState(mainModal);
+  const [visible, setVisible] = useState<string>(style.d_hide);
+  const [fade, setFade] = useState<string>(style.fade_out);
 
   useEffect(() => {
-    if (main.profile) {
-    }
+    modalHandler(style, main.profile, setVisible, setFade);
   }, [main.profile]);
 
   return (
-    <div style={{ visibility: 'hidden' }} className={`${style.sm_box} ${style.mr_1}`}>
+    <div className={`${style.sm_box} ${style.mr_1} ${visible} ${fade}`}>
       <div className={style.close_btn}>
-        <img alt="close-btn" src={process.env.REACT_APP_BUCKET_URL + 'icons/close_btn.svg'} />
+        <img
+          alt="close-btn"
+          src={process.env.REACT_APP_BUCKET_URL + 'icons/close_btn.svg'}
+          onClick={() => closeHandler(style, main, 'profile', setMain, setFade)}
+        />
       </div>
       <div className={style.detail_box_top}>
         <div className={style.detail}>
