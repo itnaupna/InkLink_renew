@@ -9,6 +9,7 @@
     height:48px;
     overflow: hidden;
     justify-content: normal !important;
+    z-index: 2;
 }
 
 .tools,.toolitem{
