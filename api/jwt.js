@@ -16,17 +16,18 @@ exports.jwt = {
         //     data
         // };
         const result = {
-            token: jwt.sign({ink:data}, key, { expiresIn: "30m" }),
-            // refreshToken: jwt.sign(p, key, { expiresIn: "1d" })
+            token: jwt.sign({ ink: data }, key, {
+                // expiresIn: "30m"
+            }),
         }
         return result;
     },
     verify: async (token) => {
         let verifid;
-        try{
-            verifid = jwt.verify(token,key);
+        try {
+            verifid = jwt.verify(token, key);
             return verifid;
-        }catch(err){
+        } catch (err) {
             console.log(err);
             return err;
         }

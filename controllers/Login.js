@@ -52,28 +52,58 @@ exports.loginController = {
     doReconnect: async (req, res) => {
         let resultData;
         try {
+            let tokenStr = req.cookies.t;
+            if (!tokenStr) return;
             let db = await mongo.connect('member');
-            const token = (await jwt.verify(req.cookies.t)).ink;
-            let user = await db.findOne({
-                _id: new ObjectId(token[0]),
-                uuid:new UUID(token[1])
-            });
-            if(user){
-                resultData = {
-                    nick: user.nick,
-                    email: user.email,
-                    total: user.total,
-                    current: user.current,
-                    profile: user.profile,
-                    role: user.role,
-                    item: user.item
-                };
-            }else{
-                return;
+            const token = (await jwt.verify(tokenStr)).ink;
+            let user = null;
+            try {
+                user = await db.findOne({
+                    _id: new ObjectId(token[0]),
+                    uuid: new UUID(token[1])
+                });
+
+                if (user) {
+                    resultData = {
+                        nick: user.nick,
+                        email: user.email,
+                        total: user.total,
+                        current: user.current,
+                        profile: user.profile,
+                        role: user.role,
+                        item: user.item
+                    };
+                }
             }
-        } finally {
+            catch {
+
+            }
+
+        }
+        catch (err) {
+            res.cookie('t', '', { expires: new Date(0) });
+            console.log(`! ${err}`);
+        }
+        finally {
             return res.status(200).json(resultData);
         }
+    },
+    //DONOTUSE
+    //미완성
+    doGuestLogin: async (req, res) => {
+        const token = await getJwtToken(["잠자는_고양이"]);
+        const data = {
+            nick: '잠자는_고양이',
+            email: '',
+            total: 0,
+            current: 0,
+            profile: '',
+            role: 0,
+            item: []
+        }
+
+        res.cookie('t', token, { httpOnly: true });
+        return res.status(200).json({ success: true, data });
     }
 }
 

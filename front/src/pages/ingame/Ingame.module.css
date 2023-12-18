@@ -59,7 +59,7 @@
     flex: 1 0 0;
 }
 
-button {
+.IngameWrapper button {
     height: 24px;
     font-size: 2.5rem;
     padding: 0 10px;
