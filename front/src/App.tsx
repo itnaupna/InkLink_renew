@@ -3,14 +3,26 @@ import { Routes, Route } from 'react-router-dom';
 import Lobby from './pages/lobby/Lobby';
 import Login from './pages/login/Login';
 import Ingame from './pages/ingame/Ingame';
+import { useRecoilValue } from 'recoil';
+import { needLoginAtom, userDataAtom } from './recoil/user';
+import Reconnect from './pages/other/Reconnect';
 
 function App() {
-  return (
+  const needLogin = useRecoilValue(needLoginAtom);
+  const userData = useRecoilValue(userDataAtom);
+
+  return !needLogin ? (
     <Routes>
-      <Route path="/" element={<Login/>}/>
-      <Route path="/lobby" element={<Lobby />} />
-      <Route path="/room/:roomId" element={<Ingame/>}/>
+      <Route path="/" element={
+        userData.nick ?
+          <Lobby /> :
+          <Login />
+      } />
+      {/* <Route path="/lobby" element={<Lobby />} /> */}
+      <Route path="/room/:roomId" element={<Ingame />} />
     </Routes>
+  ) : (
+    <Reconnect />
   );
 }
 

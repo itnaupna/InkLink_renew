@@ -6,14 +6,30 @@ router.use(express.json());
 
 const salts = 10;
 let mongo = require('../db/dbcon');
+const { UUID } = require('mongodb');
 
 exports.registerController = {
 
     signUp: async (req, res) => {
         try {
             let db = await mongo.connect('member');
-            let data = req.body?.inputs;
-            // console.log(data);
+
+            let data = {
+                id:'',
+                email:'',
+                pw:'',
+                nick:'',
+                total:0,
+                current:0,
+                profile:'',
+                role:0,
+                item:[],
+                uuid:new UUID(),
+            };
+            data = {
+                ...data,
+                ...req.body?.inputs
+            };
             if (data) {
                 const chks = await chkExist(db, data);
                 if (chks.idDup) {
@@ -27,7 +43,7 @@ exports.registerController = {
                 }
 
                 //PW 암호화
-                data.pw = await bcrypt.hash(data.pw, salts)
+                data.pw = await bcrypt.hash(data.pw, salts);
 
                 //DB에 삽입
                 await db.insertOne(data);
@@ -104,7 +120,6 @@ exports.registerController = {
 }
 
 const chkExist = async (db, data) => {
-    console.log(data);
     const p = [
         db.findOne({ id: data.id }),
         db.findOne({ nick: data.nick }),

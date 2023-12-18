@@ -5,10 +5,12 @@ const app = express();
 const port = process.env.PORT || 2320;
 const registerRouter = require('./routers/Register');
 const loginRouter = require('./routers/Login');
+const cookieParser = require('cookie-parser');
 // let db = require('./dbcon');
 // let a = await db.connect('ink');
 
 // app.use(routes);
+app.use(cookieParser());
 
 app.listen(port, async () => {
   console.log(`* 서버 시작 >>> ${port} 포트`);

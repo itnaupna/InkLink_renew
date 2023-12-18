@@ -5,8 +5,8 @@ router.use(express.json());
 
 const { loginController } = require('../controllers/Login');
 
-router.post('/api/login',loginController.doLogin);
-
+router.post('/api/login',loginController.doFreshLogin);
+router.post('/api/reconnect',loginController.doReconnect);
 
 
 

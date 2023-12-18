@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import style from './LoginBox.module.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { userDataAtom } from '../../../recoil/user';
 
 const LoginBox = () => {
+    const navi = useNavigate();
+    const setUserData = useSetRecoilState(userDataAtom);
     const [inputs, setInputs] = useState({
         id: '',
         pw: '',
@@ -21,11 +26,17 @@ const LoginBox = () => {
     const handleSignIn = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         if (inputs.id.length > 0 && inputs.pw.length > 0) {
             axios.post('/api/login', {inputs}).then(res => {
-                alert(res);
-                console.log(res);
+                try{
+                setUserData(res.data.data);
+                // navi("/lobby");
+                // if(doLogin(res.data.token)){
+                //     navi("/lobby");
+                // }
+                }catch{
+                    alert('로그인에 실패하였습니다. 다시 시도하여 주세요.');
+                }
             }).catch(res => {
-                alert(res);
-                console.log(res);
+                alert(res.response.data.msg);
             });
         }
     }
