@@ -7,6 +7,9 @@ body {
   background-repeat: repeat;
   /* overflow-x: hidden; */
 }
+body *{
+  font-family: 'Dongle', sans-serif;
+}
 
 html {
   font-size: 10px;
