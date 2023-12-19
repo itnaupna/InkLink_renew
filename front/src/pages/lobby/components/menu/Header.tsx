@@ -11,7 +11,7 @@ function Header() {
         </div>
         <div className={style.profile_text}>
           <p>일이삼사오육칠팔구십일이</p>
-          <p>점수:99999</p>
+          <p>점수 : 99999</p>
         </div>
       </div>
       <Desktop />

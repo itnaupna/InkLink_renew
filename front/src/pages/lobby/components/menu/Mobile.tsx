@@ -90,7 +90,7 @@ function Mobile() {
               <img alt="cash" src={process.env.REACT_APP_BUCKET_URL + 'icons/cash_icon.svg'} />
               <span>99999</span>
             </div>
-            <div
+            {/* <div
               className={style.cash_point_btn}
               onClick={() => {
                 listMenuHandler('shop');
@@ -98,7 +98,7 @@ function Mobile() {
               }}
             >
               <img alt="cash-add" src={process.env.REACT_APP_BUCKET_URL + 'icons/cash_add_btn.svg'} />
-            </div>
+            </div> */}
           </div>
         </li>
       </ul>
