@@ -12,22 +12,22 @@ router.use(express.json());
 
 exports.jwt = {
     sign: async (data) => {
-        const p = {
-            id: data.id,
-            nick: data.nick,
-            email: data.email,
-        };
+        // const p = {
+        //     data
+        // };
         const result = {
-            token: jwt.sign(p, key, { expiresIn: "30m" }),
-            // refreshToken: jwt.sign(p, key, { expiresIn: "1d" })
+            token: jwt.sign({ ink: data }, key, {
+                // expiresIn: "30m"
+            }),
         }
         return result;
     },
     verify: async (token) => {
         let verifid;
-        try{
-            verifid = jwt.verify(token,key);
-        }catch(err){
+        try {
+            verifid = jwt.verify(token, key);
+            return verifid;
+        } catch (err) {
             console.log(err);
             return err;
         }

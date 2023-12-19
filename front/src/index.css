@@ -6,6 +6,9 @@ body {
   background-image: url('https://cnwtybrajiqf.objectstorage.ap-seoul-1.oci.customer-oci.com/n/cnwtybrajiqf/b/Inklink/o/bg.png');
   background-repeat: repeat;
 }
+body *{
+  font-family: 'Dongle', sans-serif;
+}
 
 html {
   font-size: 10px;
