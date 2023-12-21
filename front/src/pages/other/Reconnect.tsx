@@ -4,16 +4,16 @@ import { useSetRecoilState } from 'recoil';
 import { needLoginAtom, userDataAtom } from '../../recoil/user';
 
 const Reconnect = () => {
-    const needLogin = useSetRecoilState(needLoginAtom);
+    const setNeedLogin = useSetRecoilState(needLoginAtom);
     const setUserData = useSetRecoilState(userDataAtom);
     useEffect(() => {
         axios.post('/api/reconnect').then(res => {
-            console.log(res.data);
+            // console.log(res.data);
             setUserData(res.data);
-            needLogin(false);
+            setNeedLogin(false);
         }).catch(res => {
             alert('서버와의 연결이 원활하지 않습니다.');
-            console.log(res);
+            // console.log(res);
         });
     }, []);
     return null;
