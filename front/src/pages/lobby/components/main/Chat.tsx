@@ -3,16 +3,17 @@ import style from './main.module.css';
 import { mainModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
 import { closeHandler, modalHandler } from '../../../../api/modal';
+import { lobbyChat } from '../../../../recoil/chat';
 
 function Chat() {
   const [main, setMain] = useRecoilState(mainModal);
   const [visible, setVisible] = useState<string>(style.d_hide);
   const [fade, setFade] = useState<string>(style.fade_out);
-
+  const [chat, setChat] = useRecoilState(lobbyChat);
 
   useEffect(() => {
     modalHandler(style, main.chat, setVisible, setFade);
-  }, [main.chat]);
+  }, [main.chat, chat]);
 
   return (
     <div className={`${style.lg_box} ${style.mr_1} ${visible} ${fade}`}>
@@ -27,39 +28,19 @@ function Chat() {
         <div className={style.detail}>
           <div className={style.chat_field}>
             <div className={style.chat_content}>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
-              <div className={style.chat_msg}>
-                <span className={style.chat_id}>일이삼사오육칠팔</span>: 123123121=231231231231231231231231321231213
-              </div>
+              {chat.map((item, idx) => {
+                return item.type === 'enter' ? (
+                  <div key={idx} className={style.chat_notice}>
+                    <span className={style.chat_enter_id}>{item.user}</span>
+                    <span>{item.msg}</span>
+                  </div>
+                ) : (
+                  <div key={idx} className={style.chat_msg}>
+                    <span className={style.chat_id}>{item.user}</span>
+                    <span>: {item.msg}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

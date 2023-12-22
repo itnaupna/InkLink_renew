@@ -13,12 +13,12 @@ function App() {
   const needLogin = useRecoilValue(needLoginAtom);
   const userData = useRecoilValue(userDataAtom);
 
-  useEffect(() => {
-    connectSocket();
-    return () => {
-      disconnectSocket();
-    };
-  }, []);
+  // useEffect(() => {
+  //   connectSocket();
+  //   return () => {
+  //     disconnectSocket();
+  //   };
+  // }, []);
 
   return !needLogin ? (
     <Routes>

@@ -322,12 +322,22 @@
   font-size: 2.4rem;
 }
 
-.chat_msg {
+.chat_msg,
+.chat_notice {
   word-break: break-all;
 }
 
-.chat_id {
+.chat_notice {
+  text-align: center;
+}
+
+.chat_id,
+.chat_enter_id {
   color: #8888ff;
+  margin-right: 0.5rem;
+}
+
+.chat_id {
   margin-right: 1rem;
 }
 
