@@ -13,6 +13,7 @@ function App() {
   const userData = useRecoilValue(userDataAtom);
 
   return !needLogin ? (
+    <>
     <Routes>
       <Route path="/" element={
         userData.nick ?
@@ -23,6 +24,7 @@ function App() {
       <Route path="/room/:roomId" element={<Ingame />} />
       <Route path="/test" element={<TestPage/>}/>
     </Routes>
+    </>
   ) : (
     <Reconnect />
   );
