@@ -8,6 +8,7 @@ import { needLoginAtom, userDataAtom } from './recoil/user';
 import Reconnect from './pages/other/Reconnect';
 import TestPage from './pages/test/TestPage';
 import { connectSocket, disconnectSocket } from './api/socket';
+import Socket from './pages/other/Socket';
 
 function App() {
   const needLogin = useRecoilValue(needLoginAtom);
@@ -21,12 +22,20 @@ function App() {
   // }, []);
 
   return !needLogin ? (
-    <Routes>
-      <Route path="/" element={userData.nick ? <Lobby /> : <Login />} />
-      {/* <Route path="/lobby" element={<Lobby />} /> */}
-      <Route path="/room/:roomId" element={<Ingame />} />
-      <Route path="/test" element={<TestPage />} />
-    </Routes>
+    <>
+      <Socket />
+      <Routes>
+        <Route path="/test" element={<TestPage />} />
+        {userData.nick ?
+          <>
+            <Route path="/" element={<Lobby />} />
+            <Route path="/room/:roomId" element={<Ingame />} />
+          </> :
+          <Route path="/*" element={<Login />} />
+        }
+        {/* <Route path="/lobby" element={<Lobby />} /> */}
+      </Routes>
+    </>
   ) : (
     <Reconnect />
   );

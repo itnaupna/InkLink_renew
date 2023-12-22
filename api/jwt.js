@@ -69,11 +69,11 @@ exports.jwt = {
             req.userData = resultData;
             next();
         } catch (err) {
-            console.error(`! ERR >>> ${err}`);
+            console.error(`! ERR(jwt.js) >>> ${err}`);
             res.cookie('t', '', { expires: new Date(0) });
             return res.status(401).json({ msg: "유저 정보가 없습니다. 다시 로그인을 해 주세요." });
         } finally {
-            await mongo.close();
+            mongo.close();
         }
     }
 }
