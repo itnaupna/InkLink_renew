@@ -8,6 +8,7 @@ const salts = 10;
 let mongo = require('../db/dbcon');
 const { jwt } = require('../api/jwt');
 const { ObjectId, UUID } = require('mongodb');
+const { getGuestNick } = require('../api/etc');
 
 exports.loginController = {
     doFreshLogin: async (req, res) => {
@@ -49,14 +50,14 @@ exports.loginController = {
             mongo.close();
         }
     },
-    doReconnect: async (req, res) => {
+    doReconnect: async (req, res) => { 
         let resultData;
         try {
             let tokenStr = req.cookies.t;
             if (!tokenStr) return;
             let db = await mongo.connect('member');
             const token = (await jwt.verify(tokenStr)).ink;
-            let user = null;
+            let user  = null;
             try {
                 user = await db.findOne({
                     _id: new ObjectId(token[0]),
@@ -76,28 +77,38 @@ exports.loginController = {
                 }
             }
             catch {
-
+                resultData = {
+                    nick: '애옹',
+                    email: '',
+                    total: 0,
+                    current: 0,
+                    profile: 'default.jpg',
+                    role: 0,
+                    item: []
+                }
             }
 
         }
         catch (err) {
             res.cookie('t', '', { expires: new Date(0) });
-            console.log(`! ${err}`);
+            console.error(`! ERR >>> ${err}`);
         }
         finally {
+            mongo.close();
             return res.status(200).json(resultData);
         }
     },
     //DONOTUSE
     //미완성
     doGuestLogin: async (req, res) => {
-        const token = await getJwtToken(["잠자는_고양이"]);
+        const token = await getJwtToken([new ObjectId(), new UUID()]);
+        console.log(getGuestNick());
         const data = {
-            nick: '잠자는_고양이',
+            nick: getGuestNick(),
             email: '',
             total: 0,
             current: 0,
-            profile: '',
+            profile: 'default.jpg',
             role: 0,
             item: []
         }

@@ -52,7 +52,7 @@ const LoginBox = () => {
         <li>
             <div className={style.up}>
                 <input className={style.input} placeholder='아이디'
-                    name='id' onChange={handleChange} />
+                    name='id' onChange={handleChange} lang='en' autoFocus/>
                 <input type='password' className={style.input} placeholder='비밀번호'
                     name='pw' onChange={handleChange} />
                 <button className={style.btnLogin} onClick={handleSignIn}>로그인</button>

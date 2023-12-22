@@ -37,6 +37,7 @@ const RegisterBox = () => {
 
         if ((name === 'pw' || name === 'pw2')) {
             if (legal) {
+                
                 liRef.current!.querySelectorAll('[name="pw"]')[0].classList.remove(style.illegal);
                 liRef.current!.querySelectorAll('[name="pw"]')[0].classList.remove(style.illegal);
             } else {
@@ -107,6 +108,7 @@ const RegisterBox = () => {
             //로그인 아디창에 아디도 갖다준다.
             document.getElementsByTagName('input')[0].value = toSend.id;
             //비번은 입력하셈;
+            document.getElementsByTagName('input')[1].value = '';
             document.getElementsByTagName('input')[1].focus();
         }).catch(res=>{
             alert(res.response.data.msg);
@@ -119,7 +121,7 @@ const RegisterBox = () => {
             <div className={style.content}>
                 <input className={style.input} placeholder='*아이디 (6~20 글자)'
                     maxLength={20} minLength={6} name='id'
-                    onChange={handleChange} onBlur={handleBlur} />
+                    onChange={handleChange} onBlur={handleBlur} lang='en'/>
                 <input className={style.input} placeholder='*닉네임 (2~15 글자)'
                     maxLength={15} minLength={2} name='nick'
                     onChange={handleChange} onBlur={handleBlur} />
