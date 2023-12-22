@@ -45,10 +45,10 @@ function Profile() {
               <span>일이삼사오육칠팔구십일이</span>
             </p>
             <p className={style.profile_info_nickname}>
-              <span style={{ fontSize: '2rem' }} className={style.mr_half}>
+              {/* <span style={{ fontSize: '2rem' }} className={style.mr_half}>
                 ❤️
-              </span>
-              <span>99999</span>
+              </span> */}
+              <span>점수 : 99999</span>
             </p>
           </div>
         </div>

@@ -50,11 +50,16 @@ function Notice() {
             <span>공지사항</span>
           </div>
           <div className={style.notice_preview}>
-            <img alt="new-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/new_icon.svg'} />
-            <span className={style.notice_prev_type}>[{noticeData[0].type}]</span>
-            <span className={style.notice_prev_title} onClick={() => noticeHandler(noticeData[0])}>
-              {noticeData[0].title.length > 20 ? noticeData[0].title.slice(0, 19) + '...' : noticeData[0].title}
-            </span>
+            <div className={style.notice_prev_left}>
+              <img alt="new-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/new_icon.svg'} />
+              <span className={style.notice_prev_type}>[{noticeData[0].type}]</span>
+              <div className={style.notice_prev_title} onClick={() => noticeHandler(noticeData[0])}>
+                {noticeData[0].title}
+                {noticeData[0].title}
+                {noticeData[0].title}
+              </div>
+            </div>
+            <div className={style.notice_prev_date}>{noticeData[0].date}</div>
           </div>
           <img
             className={`${style.notice_drop_down} ${down}`}
@@ -68,9 +73,15 @@ function Notice() {
         {noticeData.map((item, idx) => {
           return (
             <div key={idx} className={`${style.notice_list} ${idx % 2 === 0 ? '' : style.bg_gray}`}>
-              <div className={style.notice_type}>[{item.type}]</div>
-              <div className={style.notice_title} onClick={() => noticeHandler(item)}>
-                {item.title}
+              <div className={style.notice_prev_left}>
+                <div className={style.notice_type}>[{item.type}]</div>
+                <div className={style.notice_title} onClick={() => noticeHandler(item)}>
+                  {item.title}
+                  {item.title}
+                  {item.title}
+                  {item.title}
+                  {item.title}
+                </div>
               </div>
               <div className={style.notice_date}>{item.date}</div>
             </div>

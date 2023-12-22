@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import style from './main.module.css';
 import { mainModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ function Chat() {
   const [main, setMain] = useRecoilState(mainModal);
   const [visible, setVisible] = useState<string>(style.d_hide);
   const [fade, setFade] = useState<string>(style.fade_out);
+
 
   useEffect(() => {
     modalHandler(style, main.chat, setVisible, setFade);
