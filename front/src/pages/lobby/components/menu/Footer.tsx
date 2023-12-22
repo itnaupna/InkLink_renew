@@ -1,14 +1,23 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import style from './menu.module.css';
 import { detailModal, mainModal } from '../../../../recoil/lobby';
 import { mainMenu } from '../../../../api/menu';
+import { socketHandler } from '../../../../api/socket';
+import { userDataAtom } from '../../../../recoil/user';
 
 function Footer() {
   const [main, setMain] = useRecoilState(mainModal);
   const [detail, setDetail] = useRecoilState(detailModal);
+  const userData = useRecoilValue(userDataAtom);
 
   const mainMenuHandler = (type: string) => {
     mainMenu(type, main, setMain);
+
+    switch (type) {
+      case 'chat':
+        console.log(socketHandler('lobbychat', { userData }));
+        break;
+    }
   };
 
   const signOutHandler = () => {

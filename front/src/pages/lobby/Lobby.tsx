@@ -2,10 +2,18 @@ import './lobby.css';
 import { Header, Footer, LobbyMain, BgDesktop, BgMobile, SignOut, NoticeDetail, UserDetail } from './index';
 import MediaQuery from 'react-responsive';
 import { mobileModal } from '../../recoil/lobby';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect } from 'react';
+import { userDataAtom } from '../../recoil/user';
+import { socketHandler } from '../../api/socket';
 
 function Lobby() {
   const setMenu = useSetRecoilState(mobileModal);
+  const userData = useRecoilValue(userDataAtom);
+
+  useEffect(() => {
+    socketHandler('test', userData);
+  }, []);
 
   const mobileMenuHandler = () => {
     setMenu(false);
