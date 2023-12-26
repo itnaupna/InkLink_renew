@@ -4,19 +4,21 @@ import { detailModal, mainModal } from '../../../../recoil/lobby';
 import { mainMenu } from '../../../../api/menu';
 import { socketHandler } from '../../../../api/socket';
 import { userDataAtom } from '../../../../recoil/user';
+import { lobbyChat } from '../../../../recoil/chat';
 
 function Footer() {
   const [main, setMain] = useRecoilState(mainModal);
   const [detail, setDetail] = useRecoilState(detailModal);
   const userData = useRecoilValue(userDataAtom);
+  const [chat, setChat] = useRecoilState(lobbyChat);
 
-  const mainMenuHandler = (type: string) => {
+  const mainMenuHandler = async (type: string) => {
     mainMenu(type, main, setMain);
 
-    switch (type) {
-      case 'chat':
-        console.log(socketHandler('lobbychat', { userData }));
-        break;
+    if (type === 'chat') {
+      let result: LobbyChatType = await socketHandler('enter-chat', { ...userData, room: 'lobby' });
+      console.log(result);
+      setChat([...chat, result]);
     }
   };
 

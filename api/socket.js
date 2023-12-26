@@ -5,6 +5,9 @@ const socket = async (server) => {
   const io = new Server(server, {
     cors: {
       origin: '*',
+      methods: ['GET', 'POST'],
+      transports: ['websocket', 'polling'],
+      credentials: true,
     },
   });
 
@@ -18,9 +21,14 @@ const socket = async (server) => {
       console.log(data);
     });
 
-    socket.on('lobbychat', (data, callback) => {
+    socket.on('test', (data) => {
       console.log(data);
-      io.emit('lobbychat', { msg: 'ㅎㅇ' });
+    });
+
+    socket.on('enter-chat', (data) => {
+      console.log(data);
+      socket.join(data.room);
+      io.to(data.room).emit('enter-chat', { type: 'enter', user: data.nick, msg: '님이 입장하셨습니다.' });
     });
 
     socket.on('disconnect', () => {

@@ -10,18 +10,14 @@ const disconnectSocket = () => {
   socket.disconnect();
 };
 
-const socketHandler = async (key: string, data: {}) => {
-  let result;
+const socketHandler = (key: string, data: {}) => {
   socket.emit(key, data);
 
-  await new Promise<void>((resolve, reject) => {
+  return new Promise<any>((resolve, reject) => {
     socket.on(key, (res) => {
-      result = { ...res };
-      resolve();
+      resolve(res);
     });
   });
-
-  return result;
 };
 
 export { connectSocket, disconnectSocket, socketHandler };

@@ -33,3 +33,9 @@ interface UserType {
   location: string;
   likes: number;
 }
+
+interface LobbyChatType {
+  type: string;
+  user: string;
+  msg: string;
+}
