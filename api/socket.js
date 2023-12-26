@@ -1,4 +1,5 @@
 const { Server } = require('socket.io');
+const { roomSocket } = require('./roomSocket');
 
 const socket = async (server) => {
   const io = new Server(server, {
@@ -9,7 +10,10 @@ const socket = async (server) => {
 
   io.on('connection', (socket) => {
     console.log('Socket >>> Connected');
+    // console.log(socket);
 
+    socket.on('eong',d=>roomSocket.test(d,io,socket));
+    
     socket.on('connected', (data) => {
       console.log(data);
     });

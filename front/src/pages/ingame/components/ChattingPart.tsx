@@ -14,6 +14,7 @@ const ChattingPart = () => {
         socket.emit('eong',msg);
     }
     useEffect(()=>{
+        
         socket.on('eong',d=>{
             console.log(d);
         })
