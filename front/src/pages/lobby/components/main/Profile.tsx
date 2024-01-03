@@ -1,13 +1,15 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import style from './main.module.css';
 import { mainModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
 import { closeHandler, modalHandler } from '../../../../api/modal';
+import { userDataAtom } from '../../../../recoil/user';
 
 function Profile() {
   const [main, setMain] = useRecoilState(mainModal);
   const [visible, setVisible] = useState<string>(style.d_hide);
   const [fade, setFade] = useState<string>(style.fade_out);
+  const userData = useRecoilValue(userDataAtom);
 
   useEffect(() => {
     modalHandler(style, main.profile, setVisible, setFade);
@@ -42,13 +44,13 @@ function Profile() {
                 alt="edit-btn"
                 src={process.env.REACT_APP_BUCKET_URL + 'icons/edit_icon.svg'}
               ></img>
-              <span>일이삼사오육칠팔구십일이</span>
+              <span>{userData.nick}</span>
             </p>
             <p className={style.profile_info_nickname}>
               {/* <span style={{ fontSize: '2rem' }} className={style.mr_half}>
                 ❤️
               </span> */}
-              <span>점수 : 99999</span>
+              <span>점수 : {userData.total}</span>
             </p>
           </div>
         </div>

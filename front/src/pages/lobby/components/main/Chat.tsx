@@ -1,19 +1,37 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import style from './main.module.css';
 import { mainModal } from '../../../../recoil/lobby';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { closeHandler, modalHandler } from '../../../../api/modal';
 import { lobbyChat } from '../../../../recoil/chat';
+import { socketAtom } from '../../../../recoil/socket';
+import { userDataAtom } from '../../../../recoil/user';
 
 function Chat() {
   const [main, setMain] = useRecoilState(mainModal);
   const [visible, setVisible] = useState<string>(style.d_hide);
   const [fade, setFade] = useState<string>(style.fade_out);
-  const [chat, setChat] = useRecoilState(lobbyChat);
+  const socket = useRecoilValue(socketAtom);
+  const chat = useRecoilValue(lobbyChat);
+  const userData = useRecoilValue(userDataAtom);
+  const msgRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     modalHandler(style, main.chat, setVisible, setFade);
-  }, [main.chat, chat]);
+  }, [main.chat]);
+
+  const enterKeyHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      msgHandler();
+    }
+  };
+
+  const msgHandler = () => {
+    if (msgRef.current) {
+      socket.emit('lobbyMsg', { ...userData, msg: msgRef.current.value });
+      msgRef.current.value = '';
+    }
+  };
 
   return (
     <div className={`${style.lg_box} ${style.mr_1} ${visible} ${fade}`}>
@@ -45,8 +63,8 @@ function Chat() {
           </div>
         </div>
         <div className={style.chat_input_group}>
-          <input type="text" />
-          <div className={style.chat_send_btn}>
+          <input type="text" maxLength={60} ref={msgRef} onKeyUp={enterKeyHandler} />
+          <div className={style.chat_send_btn} onClick={msgHandler}>
             <img alt="send-btn" src={process.env.REACT_APP_BUCKET_URL + 'icons/send_icon.svg'} />
           </div>
         </div>

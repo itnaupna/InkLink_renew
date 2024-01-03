@@ -6,6 +6,7 @@ const port = process.env.PORT || 2320;
 const registerRouter = require('./routers/Register');
 const loginRouter = require('./routers/Login');
 const bucketRouter = require('./routers/Bucket');
+const lobbyRouter = require('./routers/Lobby');
 const cookieParser = require('cookie-parser');
 const { createServer } = require('node:http');
 const server = createServer(app);
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'front/build')));
 app.use(registerRouter);
 app.use(loginRouter);
 app.use(bucketRouter);
+app.use(lobbyRouter);
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'front/build/index.html'));

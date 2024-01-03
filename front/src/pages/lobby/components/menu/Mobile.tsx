@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import style from './menu.module.css';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { listMenu, mainMenu } from '../../../../api/menu';
 import { detailModal, listModal, mainModal, mobileModal, shopTabHandler } from '../../../../recoil/lobby';
+import { socketAtom } from '../../../../recoil/socket';
+import { userDataAtom } from '../../../../recoil/user';
+import { lobbyChat } from '../../../../recoil/chat';
 
 function Mobile() {
   const [menu, setMenu] = useRecoilState(mobileModal);
@@ -11,6 +14,9 @@ function Mobile() {
   const setList = useSetRecoilState(listModal);
   const setTab = useSetRecoilState(shopTabHandler);
   const [visible, setVisible] = useState<string>('');
+  const socket = useRecoilValue(socketAtom);
+  const [userData, setUserData] = useRecoilState(userDataAtom);
+  const setChat = useSetRecoilState(lobbyChat);
 
   useEffect(() => {
     if (menu) {
@@ -36,6 +42,19 @@ function Mobile() {
     mainMenu(type, main, setMain);
     setMenu(false);
     setVisible('');
+
+    if (type === 'chat' && !main.chat) {
+      socket.emit('lobbyChat', userData);
+
+      socket.on('enterLobbyChat', (data) => {
+        setUserData({ ...userData, location: data.location });
+        setChat((prevChat) => [...prevChat, data]);
+      });
+    }
+
+    return () => {
+      socket.off('enterLobbyChat');
+    };
   };
 
   const signOutHandler = () => {

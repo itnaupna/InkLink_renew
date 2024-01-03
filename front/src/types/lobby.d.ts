@@ -20,22 +20,27 @@ interface DetailType {
 }
 
 interface NoticeType {
+  _id: string;
   type: string;
   title: string;
   content: string;
   date: string;
 }
 
-interface UserType {
-  icon: string;
-  nickName: string;
-  score: number;
-  location: string;
-  likes: number;
-}
-
 interface LobbyChatType {
   type: string;
   user: string;
   msg: string;
+}
+
+interface RoomInfoType {
+  roomNum: number;
+  roomId: string;
+  title: string;
+  curUser: number;
+  maxUser: number;
+  userList: string[];
+  private: boolean;
+  password: string;
+  waiting: boolean;
 }

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import style from './main.module.css';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { mainModal, detailModal } from '../../../../recoil/lobby';
-import { noticeDetail } from '../../../../recoil/detail';
-import noticeData from '../../../../deleteme/notice.json';
+import { noticeDetail, noticeList } from '../../../../recoil/detail';
+import axios from 'axios';
 
 function Notice() {
   const [main, setMain] = useRecoilState(mainModal);
@@ -11,7 +11,8 @@ function Notice() {
   const [fade, setFade] = useState<string>(style.notice_hide);
   const [down, setDown] = useState<string>('');
   const [detail, setDetail] = useRecoilState(detailModal);
-  const setNotice = useSetRecoilState(noticeDetail);
+  const [notice, setNotice] = useRecoilState(noticeList);
+  const setNoticeDetail = useSetRecoilState(noticeDetail);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -32,13 +33,26 @@ function Notice() {
     };
   }, [main.notice]);
 
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/lobby/notice',
+    })
+      .then((res) => {
+        setNotice(res.data?.notice);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const dropDownHandler = () => {
     setMain({ ...main, notice: !main.notice });
   };
 
   const noticeHandler = (item: NoticeType) => {
     setDetail({ ...detail, notice: true });
-    setNotice(item);
+    setNoticeDetail(item);
   };
 
   return (
@@ -52,14 +66,12 @@ function Notice() {
           <div className={style.notice_preview}>
             <div className={style.notice_prev_left}>
               <img alt="new-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/new_icon.svg'} />
-              <span className={style.notice_prev_type}>[{noticeData[0].type}]</span>
-              <div className={style.notice_prev_title} onClick={() => noticeHandler(noticeData[0])}>
-                {noticeData[0].title}
-                {noticeData[0].title}
-                {noticeData[0].title}
+              <span className={style.notice_prev_type}>[{notice[0].type}]</span>
+              <div className={style.notice_prev_title} onClick={() => noticeHandler(notice[0])}>
+                {notice[0].title}
               </div>
             </div>
-            <div className={style.notice_prev_date}>{noticeData[0].date}</div>
+            <div className={style.notice_prev_date}>{notice[0].date}</div>
           </div>
           <img
             className={`${style.notice_drop_down} ${down}`}
@@ -70,16 +82,12 @@ function Notice() {
         </div>
       </div>
       <div className={`${style.notice_detail} ${visible} ${fade}`}>
-        {noticeData.map((item, idx) => {
+        {notice.map((item, idx) => {
           return (
             <div key={idx} className={`${style.notice_list} ${idx % 2 === 0 ? '' : style.bg_gray}`}>
               <div className={style.notice_prev_left}>
                 <div className={style.notice_type}>[{item.type}]</div>
                 <div className={style.notice_title} onClick={() => noticeHandler(item)}>
-                  {item.title}
-                  {item.title}
-                  {item.title}
-                  {item.title}
                   {item.title}
                 </div>
               </div>

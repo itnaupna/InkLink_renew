@@ -25,7 +25,7 @@ function SignOut() {
     <div className={`detail_modal_bg ${visible}`} onClick={signOutHandler}>
       <div className="detail_modal_box">
         <div className={`detail_modal ${hide}`} onClick={(e) => e.stopPropagation()}>
-          <p className={style.title}>Q. 정말 로그아웃 하시겠습니까?</p>
+          <p className={`${style.title} ${style.c_black}`}>Q. 정말 로그아웃 하시겠습니까?</p>
           <div className={style.btn_box}>
             <div className={style.sign_out_btn} onClick={signOutHandler}>
               취소
