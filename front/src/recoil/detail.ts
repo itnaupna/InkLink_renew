@@ -46,7 +46,7 @@ const roomInfo = atom<RoomInfoType>({
     roomId: '',
     title: '',
     curUser: 0,
-    maxUser: 0,
+    maxUser: 8,
     userList: [],
     private: false,
     password: '',

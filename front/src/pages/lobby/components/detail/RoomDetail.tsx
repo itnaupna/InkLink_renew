@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import style from './detail.module.css';
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { detailModal } from '../../../../recoil/lobby';
-import { roomInfo, roomList } from '../../../../recoil/detail';
+import { roomInfo } from '../../../../recoil/detail';
 import { socketAtom } from '../../../../recoil/socket';
 import { userDataAtom } from '../../../../recoil/user';
+import { useNavigate } from 'react-router-dom';
 
 function RoomDetail() {
   const [room, setRoom] = useRecoilState(roomInfo);
@@ -14,6 +15,7 @@ function RoomDetail() {
   const [hide, setHide] = useState<string>('d_hide');
   const socket = useRecoilValue(socketAtom);
   const userData = useRecoilValue(userDataAtom);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (detail.room) {
@@ -30,12 +32,13 @@ function RoomDetail() {
   };
 
   const roomHandler = () => {
+    console.log(room.maxUser);
     if (!titleValid(room.title)) {
       console.log('제목 미입력');
       return;
     }
 
-    if (room.maxUser === 0) {
+    if (!room.maxUser) {
       console.log('최대인원 미선택');
       return;
     }
@@ -47,6 +50,14 @@ function RoomDetail() {
 
     socket.emit('createRoom', { room, userData });
     closeRoomCreator();
+
+    socket.on('enterRoom', (url) => {
+      navigate(`/room/${url}`);
+    });
+
+    return () => {
+      socket.off('enterRoom');
+    };
   };
 
   return (
@@ -62,6 +73,7 @@ function RoomDetail() {
             onChange={(e) => {
               setRoom({ ...room, title: e.target.value });
             }}
+            maxLength={16}
           />
           <p className={style.room_title}>상세설정</p>
           <div className={style.room_settings}>
@@ -74,7 +86,6 @@ function RoomDetail() {
                   setRoom({ ...room, maxUser: parseInt(e.target.value) });
                 }}
               >
-                <option value={0}>선택</option>
                 <option value={4}>4</option>
                 <option value={5}>5</option>
                 <option value={6}>6</option>
@@ -119,7 +130,7 @@ function RoomDetail() {
 }
 
 function titleValid(title: string) {
-  const titleChk = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]{2,15}$/;
+  const titleChk = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]{2,16}$/;
   return titleChk.test(title);
 }
 

@@ -4,6 +4,8 @@ import { detailModal, listModal, mainModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
 import { closeHandler, modalHandler } from '../../../../api/modal';
 import { roomList } from '../../../../recoil/detail';
+import { useNavigate } from 'react-router-dom';
+import { socketAtom } from '../../../../recoil/socket';
 
 function RoomList() {
   const [list, setList] = useRecoilState(listModal);
@@ -12,6 +14,8 @@ function RoomList() {
   const [fade, setFade] = useState<string>(style.fade_out);
   const [detail, setDetail] = useRecoilState(detailModal);
   const room = useRecoilValue(roomList);
+  const socket = useRecoilValue(socketAtom);
+  const navigate = useNavigate();
 
   useEffect(() => {
     modalHandler(style, list.room, setVisible, setFade);
@@ -24,6 +28,11 @@ function RoomList() {
 
   const createRoom = () => {
     setDetail({ ...detail, room: true });
+  };
+
+  const joinRoom = (id: string) => {
+    socket.emit('joinRoom');
+    navigate(`/room/${id}`);
   };
 
   return (
@@ -74,12 +83,16 @@ function RoomList() {
                     {item.waiting ? (
                       <>
                         <p className={style.waiting}>WAITING</p>
-                        <div className={style.enter_btn}>입장</div>
+                        <div className={style.enter_btn} onClick={() => joinRoom(item.roomId)}>
+                          입장
+                        </div>
                       </>
                     ) : (
                       <>
                         <p className={style.playing}>PLAYING</p>
-                        <div className={style.enter_btn}>입장</div>
+                        <div className={style.enter_btn} onClick={() => joinRoom(item.roomId)}>
+                          입장
+                        </div>
                       </>
                     )}
                   </div>
