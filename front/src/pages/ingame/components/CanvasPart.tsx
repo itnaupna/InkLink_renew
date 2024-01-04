@@ -3,7 +3,7 @@ import style from './CanvasPart.module.css';
 import CanvasToolbar from './CanvasToolbar';
 import Popup1 from './Popup1';
 import { useRecoilState } from 'recoil';
-import {  canvasStateAtom } from '../../../recoil/canvas';
+import { canvasStateAtom } from '../../../recoil/canvas';
 import { CanvasLogs, c2h, floodFill } from '../../../api/canvas';
 
 
@@ -12,13 +12,25 @@ const CanvasPart = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [cs, setCS] = useRecoilState(canvasStateAtom);
     const [cvLogs, setCvLogs] = useState<CanvasLogs>();
-
+    const drawingData = useRef<any>([]);
+    
     useEffect(() => {
 
         const canvas = canvasRef.current!;
         const ctx = canvas.getContext('2d')!;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
+
+        const flushData = setInterval(()=>{
+            if(drawingData.current.length>0){
+                console.log(JSON.stringify(drawingData.current));
+                drawingData.current.length = 0;
+            }
+        },50);
+
+        return () => {
+            clearInterval(flushData);
+        }
 
     }, []);
 
@@ -45,7 +57,8 @@ const CanvasPart = () => {
             case 3:
                 ctx.clearRect(0, 0, 800, 600);
                 setCS({ ...cs, tool: 0 });
-                cvLogs?.clearLogs();
+                cvLogs?.logDrawing();
+                // cvLogs?.clearLogs();
                 break;
             default:
                 break;
@@ -66,6 +79,17 @@ const CanvasPart = () => {
             }
     }, [cs.isDrawing])
 
+    const pushDrawingData = (data:any) =>{
+        drawingData.current.push(data);
+        //[0,[툴,[데이터]]]
+        //붓 : [0,[0,[0,x,y,color,width]]]
+        //붓2: [0,[0,[1,x,y,color,width]]]
+        //지 : [0,[1,[0,x,y]]]
+        //지2: [0,[1,[1,x,y]]]
+        //통 : [0,[2,[x,y,color,width]]]
+        //텅 : [0,[3]]
+        
+    }
 
     const startDraw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent> | React.TouchEvent) => {
         e.preventDefault();
@@ -75,11 +99,22 @@ const CanvasPart = () => {
 
         if (e.nativeEvent instanceof MouseEvent) {
             //마우스 클릭
+            const { offsetX, offsetY } = e.nativeEvent;
+            const ratio = canvas.clientWidth / canvas.width;
+            const x = offsetX / ratio;
+            const y = offsetY / ratio;
             if (cs.tool === 2) {
-                const { offsetX, offsetY } = e.nativeEvent;
-                floodFill(ctx, offsetX, offsetY, c2h(cs.color));
+                pushDrawingData([x, y, cs.color, cs.lineWidth, cs.tool]);
+                // data.push();
+                // console.log(data.length);
+                // console.log(data.length);
+                floodFill(ctx, x, y, c2h(cs.color));
                 cvLogs?.logDrawing();
             } else {
+                pushDrawingData([0,[x, y, cs.color, cs.lineWidth, cs.tool]]);
+                // alert('dd');
+                ctx.beginPath();
+                ctx.moveTo(x, y);
                 setCS({
                     ...cs,
                     isDrawing: true
@@ -112,7 +147,7 @@ const CanvasPart = () => {
         }
     }
     const doDraw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent> | React.TouchEvent) => {
-        if (!cs.myTurn) return;
+        if (!cs.myTurn || !cs.isDrawing) return;
         e.preventDefault();
         let offsetX: number, offsetY: number;
         if (e.nativeEvent instanceof MouseEvent) {
@@ -125,25 +160,24 @@ const CanvasPart = () => {
 
         const canvas = canvasRef.current!;
         const ctx = canvas.getContext('2d')!;
-        
+
         const ratio = canvas.clientWidth / canvas.width;
+        const x = offsetX / ratio;
+        const y = offsetY / ratio;
         
-        if (!cs.isDrawing) {
-            ctx.beginPath();
-            ctx.moveTo(offsetX / ratio, offsetY / ratio);
-        } else {
-            ctx.lineTo(offsetX / ratio, offsetY / ratio);
-            ctx.stroke();
-        }
+        pushDrawingData([1, x, y, cs.color, cs.lineWidth, cs.tool]);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
     }
-    
-    const undo = async () =>{
+
+    const undo = async () => {
         await cvLogs?.undo();
     }
-    const redo = async () =>{
+    const redo = async () => {
         await cvLogs?.redo();
     }
-    
+
 
 
     return (
@@ -161,7 +195,7 @@ const CanvasPart = () => {
                 onTouchCancel={stopDraw}
                 onPointerDown={(e) => { }}
                 onContextMenu={(e) => { e.preventDefault(); }} />
-            <CanvasToolbar a={undo} b={redo}/>
+            <CanvasToolbar a={undo} b={redo} />
         </div>
     );
 };

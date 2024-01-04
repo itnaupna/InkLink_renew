@@ -46,7 +46,7 @@ const CanvasToolbar = (a: any) => {
         } else{
             return;
         }
-        c = c < 0 ? 0 : c > 20 ? 20 : c;
+        c = c < 1 ? 1 : c > 20 ? 20 : c;
 
         setCS(v => ({
             ...v, lineWidth: c
