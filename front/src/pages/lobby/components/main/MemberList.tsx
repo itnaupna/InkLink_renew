@@ -1,10 +1,10 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import style from './main.module.css';
 import { detailModal, mainModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
 import { closeHandler, modalHandler } from '../../../../api/modal';
+import { userStatusAtom } from '../../../../recoil/user';
 import { userDetail } from '../../../../recoil/detail';
-import userData from '../../../../deleteme/user.json';
 
 function MemberList() {
   const [main, setMain] = useRecoilState(mainModal);
@@ -12,12 +12,14 @@ function MemberList() {
   const [fade, setFade] = useState<string>(style.fade_out);
   const [detail, setDetail] = useRecoilState(detailModal);
   const setUser = useSetRecoilState(userDetail);
+  const status = useRecoilValue(userStatusAtom);
 
   useEffect(() => {
     modalHandler(style, main.memberList, setVisible, setFade);
   }, [main.memberList]);
 
-  const userInfoHandler = (item: UserType) => {
+  const userInfoHandler = (item: userData) => {
+    console.log(item);
     setDetail({ ...detail, user: true });
     setUser(item);
   };
@@ -42,18 +44,20 @@ function MemberList() {
             <div className={style.input_grp_gutter}>
               <div className={style.input_group}>
                 <img alt="search-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/search_icon.svg'} />
-                <input type="text" placeholder="닉네임을 입력해주세요" />
+                <input type="text" placeholder="닉네임을 입력해주세요." />
                 <div className={style.search_btn}>검색</div>
               </div>
             </div>
-            {userData.map((item, idx) => {
+            {status.map((item, idx) => {
               return (
                 <div key={idx} className={`${style.member_list} ${idx % 2 === 0 ? '' : style.bg_gray}`}>
                   <div className={style.member_nickname} onClick={() => userInfoHandler(item)}>
-                    {item.nickName}
+                    {item.nick}
                   </div>
-                  <div className={style.member_score}>{item.score}</div>
-                  <div className={style.member_location}>{item.location}번방</div>
+                  <div className={style.member_score}>{item.total}</div>
+                  <div className={style.member_location}>
+                    {item.location === 'main' || item.location === 'lobby' ? '로비' : item.location + '번방'}
+                  </div>
                 </div>
               );
             })}

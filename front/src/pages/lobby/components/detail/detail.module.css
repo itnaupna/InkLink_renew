@@ -3,15 +3,72 @@
   background-color: #8888ff;
 }
 
-.title {
+.title,
+.room_title {
   text-align: center;
   font-size: 3.2rem;
   margin: 0;
+  color: #8888ff;
+}
+
+.c_black {
+  color: #222;
+}
+
+.room_title {
+  width: 95%;
+  text-align: start;
+}
+
+.room_settings {
+  align-items: center;
+  width: 95%;
+  margin: 0 0 0.4rem 0;
+}
+
+.room_ppl,
+.room_password {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin: 0.8rem 0;
+}
+
+.setting_title {
+  font-size: 2.4rem;
+  margin: 0 1rem 0 0;
+}
+
+.setting_title input {
+  margin: 0 0 0 1rem;
+  transform: scale(1.6);
+}
+
+.select {
+  font-size: 2.4rem;
+  text-align: center;
+  border-radius: 8px;
 }
 
 .btn_box {
   display: flex;
   margin-top: 2rem;
+}
+
+.input_title {
+  width: 90%;
+  font-size: 2.4rem;
+  padding: 0 1rem;
+  margin: 0.4rem 0 2rem 0;
+  border-radius: 8px;
+}
+
+.input_pass {
+  width: 40%;
+  text-align: center;
+  font-size: 2.4rem;
+  border-radius: 8px;
+  padding: 0 1rem;
 }
 
 /* SignOut */

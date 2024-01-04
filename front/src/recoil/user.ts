@@ -1,22 +1,28 @@
-import { atom } from "recoil";
+import { atom } from 'recoil';
 
 const userDataAtom = atom<userData>({
-    key:'userDataAtom',
-    default:{
-        nick: '',
-        email: '',
-        total: 0,
-        current: 0,
-        profile: '',
-        role: 0,
-        item: []
-    }
+  key: 'userDataAtom',
+  default: {
+    socket_id: '',
+    nick: '',
+    email: '',
+    total: 0,
+    current: 0,
+    profile: '',
+    role: 0,
+    item: [],
+    location: '',
+  },
+});
+
+const userStatusAtom = atom<userData[]>({
+  key: 'userStatusAtom',
+  default: [],
 });
 
 const needLoginAtom = atom<boolean>({
-    key:'needLoginAtom',
-    default:true
+  key: 'needLoginAtom',
+  default: true,
 });
 
-
-export {userDataAtom, needLoginAtom};
+export { userDataAtom, userStatusAtom, needLoginAtom };

@@ -27,17 +27,16 @@ function MemberDetail() {
     <div className={`detail_modal_bg ${visible}`} onClick={closeUserInfo}>
       <div className="detail_modal_box">
         <div className={`detail_modal ${hide}`} onClick={(e) => e.stopPropagation()}>
-          <img
+          {/* <img
             alt="user_profile"
-            src={process.env.REACT_APP_BUCKET_URL + user.icon}
+            src={process.env.REACT_APP_BUCKET_URL + user.profile}
             style={{ width: '15rem', height: '15rem' }}
-          />
-          <p className={style.title}>{user.nickName}</p>
+          /> */}
+          <p className={style.title}>{user.nick}</p>
           <div className={style.btn_box}>
-            <div className={style.sign_out_btn} onClick={closeUserInfo}>
-              취소
+            <div className={`${style.sign_out_btn} ${style.btn_main}`} onClick={closeUserInfo}>
+              확인
             </div>
-            <div className={`${style.sign_out_btn} ${style.btn_main}`}>확인</div>
           </div>
         </div>
       </div>

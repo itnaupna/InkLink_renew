@@ -1,25 +1,33 @@
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import style from './menu.module.css';
 import { detailModal, mainModal } from '../../../../recoil/lobby';
 import { mainMenu } from '../../../../api/menu';
-import { socketHandler } from '../../../../api/socket';
 import { userDataAtom } from '../../../../recoil/user';
 import { lobbyChat } from '../../../../recoil/chat';
+import { socketAtom } from '../../../../recoil/socket';
 
 function Footer() {
   const [main, setMain] = useRecoilState(mainModal);
   const [detail, setDetail] = useRecoilState(detailModal);
-  const userData = useRecoilValue(userDataAtom);
-  const [chat, setChat] = useRecoilState(lobbyChat);
+  const [userData, setUserData] = useRecoilState(userDataAtom);
+  const socket = useRecoilValue(socketAtom);
+  const setChat = useSetRecoilState(lobbyChat);
 
   const mainMenuHandler = async (type: string) => {
     mainMenu(type, main, setMain);
 
-    if (type === 'chat') {
-      let result: LobbyChatType = await socketHandler('enter-chat', { ...userData, room: 'lobby' });
-      console.log(result);
-      setChat([...chat, result]);
+    if (type === 'chat' && !main.chat) {
+      socket.emit('lobbyChat', userData);
+
+      socket.on('enterLobbyChat', (data) => {
+        setUserData({ ...userData, location: data.location });
+        setChat((prevChat) => [...prevChat, data]);
+      });
     }
+
+    return () => {
+      socket.off('enterLobbyChat');
+    };
   };
 
   const signOutHandler = () => {
