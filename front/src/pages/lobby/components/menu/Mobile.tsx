@@ -44,16 +44,16 @@ function Mobile() {
     setVisible('');
 
     if (type === 'chat' && !main.chat) {
-      socket.emit('lobbyChat', userData);
+      socket?.emit('lobbyChat', userData);
 
-      socket.on('enterLobbyChat', (data) => {
+      socket?.on('enterLobbyChat', (data) => {
         setUserData({ ...userData, location: data.location });
         setChat((prevChat) => [...prevChat, data]);
       });
     }
 
     return () => {
-      socket.off('enterLobbyChat');
+      socket?.off('enterLobbyChat');
     };
   };
 

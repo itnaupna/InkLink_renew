@@ -14,7 +14,11 @@ function App() {
 
   return !needLogin ? (
     <>
-      <Socket />
+      {
+        userData.nick ?
+          <Socket /> :
+          null
+      }
       <Routes>
         <Route path="/test" element={<TestPage />} />
         {userData.nick ? (

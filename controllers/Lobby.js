@@ -26,6 +26,7 @@ exports.lobbyController = {
       if (!data.msg || data.msg.length > 60) {
         return;
       }
+      console.log(`${socket.id} ${data.nick} >> ${data.msg}`);
 
       io.to(data.location).emit('broadcastLobby', {
         type: 'msg',

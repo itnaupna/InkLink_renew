@@ -9,5 +9,7 @@
 .canvas{
     background-color: #fff;
     width:100%;
+    height:auto;
     z-index: 1;
+    /* image-rendering: pixelated; */
 }
