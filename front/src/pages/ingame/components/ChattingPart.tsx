@@ -3,6 +3,7 @@ import style from './ChattingPart.module.css';
 import ChattingItem from './ChattingItem';
 import { useRecoilValue } from 'recoil';
 import { socketAtom } from '../../../recoil/socket';
+import { Socket } from 'socket.io-client';
 const ChattingPart = () => {
     const [msg,setMsg] = useState<string>();
     const imgPrefix = process.env.REACT_APP_BUCKET_URL;
@@ -11,15 +12,15 @@ const ChattingPart = () => {
         setMsg(e.target.value.trim());
     }
     const handleSendMsg = ()=>{
-        socket.emit('eong',msg);
+        socket?.emit('eong',msg);
     }
     useEffect(()=>{
         
-        socket.on('eong',d=>{
+        socket?.on('eong',d=>{
             console.log(d);
         })
         return ()=>{
-            socket.off('eong');
+            socket?.off('eong');
         }
     },[]);
     return (

@@ -28,7 +28,7 @@ function Chat() {
 
   const msgHandler = () => {
     if (msgRef.current) {
-      socket.emit('lobbyMsg', { ...userData, msg: msgRef.current.value });
+      socket?.emit('lobbyMsg', { ...userData, msg: msgRef.current.value });
       msgRef.current.value = '';
     }
   };

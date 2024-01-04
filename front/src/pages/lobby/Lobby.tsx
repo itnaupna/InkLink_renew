@@ -21,8 +21,8 @@ function Lobby() {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    socket.emit('enterLobby', userData);
-    socket.on('userInfo', (data) => {
+    socket?.emit('enterLobby', userData);
+    socket?.on('userInfo', (data) => {
       setUserData({ ...data });
     });
 
@@ -33,39 +33,39 @@ function Lobby() {
     }, 2000);
 
     return () => {
-      socket.off('userInfo');
+      socket?.off('userInfo');
       clearTimeout(timer);
     };
   }, []);
 
   useEffect(() => {
-    socket.on('memberList', (data) => {
+    socket?.on('memberList', (data) => {
       setStatus([...data]);
     });
 
     return () => {
-      socket.off('memberList');
+      socket?.off('memberList');
     };
   }, [status]);
 
   useEffect(() => {
-    socket.on('roomList', (data) => {
+    socket?.on('roomList', (data) => {
       console.log(data);
       setRoom([...data]);
     });
 
     return () => {
-      socket.off('roomList');
+      socket?.off('roomList');
     };
   }, [room]);
 
   useEffect(() => {
-    socket.on('broadcastLobby', (data) => {
+    socket?.on('broadcastLobby', (data) => {
       setChat((prevChat) => [...prevChat, data]);
     });
 
     return () => {
-      socket.off('broadcastLobby');
+      socket?.off('broadcastLobby');
     };
   }, [chat]);
 

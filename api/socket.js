@@ -17,7 +17,7 @@ const socket = async (server) => {
   });
 
   io.on('connection', (socket) => {
-    console.log('Socket >>> Connected');
+    console.log('Socket >>> Connected' + socket.id);
     // console.log(socket);
 
     socket.on('eong',d=>roomSocket.test(d,io,socket));
