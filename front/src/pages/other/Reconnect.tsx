@@ -10,8 +10,9 @@ const Reconnect = () => {
     useEffect(() => {
         axios.post('/api/reconnect').then(res => {
             // console.log(res.data);
-            console.log(res.data.data);
-            setUserData(res.data.data);
+            console.log(res.data);
+            if (res.data.data)
+                setUserData(res.data.data);
             setCode(res.data.eong);
             // setNeedLogin(false);
         }).catch(res => {
@@ -21,6 +22,6 @@ const Reconnect = () => {
         setNeedLogin(false);
     }, []);
     return null;
-}; 
+};
 
 export default Reconnect;
