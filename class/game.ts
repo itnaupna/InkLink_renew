@@ -7,18 +7,25 @@ interface roomSetting {
     customs: string[];  //커스텀목록
     owner: string;      //방장 소켓ID
 }
-interface userData {
-    socket_id?: string;
+const defaultSetting:roomSetting = {
+    lang:0,
+    max:8,
+    limit:60,
+    round:3,
+    useCustom:false,
+    customs:[],
+    owner:''
+}
+interface User {
+    socket_id: string;
     nick: string;
-    email?: string;
     total: number;
     current: number;
-    profile?: string;
+    profile: string;
     role: number;
-    item: [];
     location: string;
 }
-interface userInRoom{
+interface userInRoom {
     socket_id: string;
     nick: string;
     profile: string;
@@ -26,27 +33,31 @@ interface userInRoom{
     current: number;
     status: number;
 }
-class RoomInfo {
+class Room {
     private _id: string;
     private _title: string;
     private _password: string;
-    private _setting: roomSetting;
+    private _setting: roomSetting = defaultSetting;
     private _status: number = 0;
     private _timer: number = 0;
     private _users: userInRoom[] = [];
     private _answer: string;
+    private _roomNumber: number;
 
     constructor(
         id: string,
         title: string,
         maxUser: number,
-        password: string
+        password: string,
+        number:number,
     ) {
         this._id = id;
         this._title = title;
         this._password = password;
         this._setting.max = maxUser;
+        this._roomNumber = number;
     }
+
 
     infoForList() {
         return {
@@ -58,17 +69,10 @@ class RoomInfo {
             status: this._status
         }
     }
-    addUser(socket_id: string, nick: string, total: number, profile: string) {
-        this._users.push({
-            socket_id,
-            nick,
-            profile,
-            total,
-            current:0,
-            status:0,
-        });
+    addUser(data: userInRoom) {
+        this._users.push(data);
         if (this._users.length === 1) {
-            this._setting.owner = socket_id;
+            this._setting.owner = data.socket_id;
         }
         // return this._users;
     }
@@ -98,54 +102,94 @@ class RoomInfo {
                 break;
         }
     }
-    get users() {
-        return this._users;
-    }
-    get setting() {
-        return this._setting;
-    }
-    get id(){
-        return this._id;
-    }
+    get users() { return this._users; }
+    get setting() { return this._setting; }
+    get id() { return this._id; }
+    get answer() { return this._answer };
+    set answer(answer:string){this._answer = answer;} 
+    get timer() {return this._timer;}
+    set timer(sec:number){this._timer = sec;}
 }
 
 class Game {
-    private _roomList: RoomInfo[];
-    private _userList: userData[];
+    private _roomList: Room[];
+    private _userList: User[];
+    private _roomNumber:number = 1;
     constructor() {
         this._roomList = [];
         this._userList = [];
     }
-    
-    createRoom(id:string,title:string,maxUser:number,password:string){
-        this._roomList.push(new RoomInfo(id,title,maxUser,password));
-    }
-    deleteRoom(id:string){
-        this._roomList = this._roomList.filter(v=>v.id !== id);
-    }
 
-    connectUser(){
+    //방생성
+    createRoom(id: string, title: string, maxUser: number, password: string) {
+        this._roomList.push(new Room(id, title, maxUser, password,this._roomNumber++));
         
     }
-    changeLocation(){
 
+    //방삭제
+    deleteRoom(id: string) {
+        this._roomList = this._roomList.filter(v => v.id !== id);
     }
-    disconnectUser(){
 
+    //방존재여부 확인
+    getRoomById(id: string) {
+        return this._roomList.find(v => v.id === id);
     }
 
+    //유저 접속
+    connectUser(data: User) {
+        this._userList.push(data);
+    }
+
+    //유저 위치변경
+    changeLocation(socket_id: string, location: string) {
+        if (location !== 'main') {
+            //접속한 방이 로비가 아닐경우
+            const room = this.getRoomById(location);
+            if (room) {
+                //방이 유효할경우 사람을 넣어준다.
+                const user = this._userList.find(v => v.socket_id === socket_id);
+                if (user)
+                    room.addUser({
+                        socket_id,
+                        current: user.current,
+                        nick: user.nick,
+                        profile: user.profile,
+                        status: 0,
+                        total: user.total,
+                    });
+            } else {
+
+            }
+        }
+        const user = this._userList.find(v => v.socket_id === socket_id);
+        if (user)
+            user.location = location;
+    }
+    //유저 연결끊김
+    disconnectUser(socket_id: string) {
+        this._userList = this._userList.filter(v => v.socket_id !== socket_id);
+    }
+
+    //방목록, 유저목록 반환
     getAlls() {
         return {
             rooms: this.roomList,
             users: this.userList
         }
     }
+
+    //방목록 반환
     get roomList() {
         return this._roomList.map(room => room.infoForList());
     }
+
+    //유저목록 반환
     get userList() {
         return this._userList;
     }
-    
+
 
 }
+
+export {Game};

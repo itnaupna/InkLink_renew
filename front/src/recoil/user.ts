@@ -25,4 +25,9 @@ const needLoginAtom = atom<boolean>({
   default: true,
 });
 
-export { userDataAtom, userStatusAtom, needLoginAtom };
+const socketVerifyCodeAtom = atom<string>({
+  key:'socketVerifyCodeAtom',
+  default:'',
+});
+
+export { userDataAtom, userStatusAtom, needLoginAtom,socketVerifyCodeAtom  };

@@ -1,15 +1,18 @@
 import axios from 'axios';
 import React, { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { needLoginAtom, userDataAtom } from '../../recoil/user';
+import { needLoginAtom, socketVerifyCodeAtom, userDataAtom } from '../../recoil/user';
 
 const Reconnect = () => {
     const setNeedLogin = useSetRecoilState(needLoginAtom);
     const setUserData = useSetRecoilState(userDataAtom);
+    const setCode = useSetRecoilState(socketVerifyCodeAtom);
     useEffect(() => {
         axios.post('/api/reconnect').then(res => {
             // console.log(res.data);
-            setUserData(res.data);
+            console.log(res.data.data);
+            setUserData(res.data.data);
+            setCode(res.data.eong);
             // setNeedLogin(false);
         }).catch(res => {
             // setNeedLogin(false);
