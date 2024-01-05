@@ -24,19 +24,8 @@ const socket = async (server) => {
     },
     // pingTimeout: 50000,
     // pingInterval: 50000,
-
   });
 
-<<<<<<< HEAD
-  io.on('connection', (socket) => {
-    console.log('Socket >>> Connected : ' + socket.id);
-
-    socket.on('eong', (d) => roomSocket.test(d, io, socket));
-
-    // socket.on('connected', (data) => {
-    //   console.log(data);
-    // });
-=======
   io.on('connection', async (socket) => {
     console.log('Socket >>> Connected ' + socket.id + "\n" + JSON.stringify(socket.handshake.query));
     
@@ -60,7 +49,6 @@ const socket = async (server) => {
       socket.join(data.location);
       socket.emit('initSocket',{id:data.socket_id,loc:data.location});
     }
->>>>>>> 1bd360d02dd6f2143e6d66b8be1750bef1ee4ccc
 
     socket.on('enterLobby', (data) => {
       const idx = connectedUsers.findIndex((item) => {
