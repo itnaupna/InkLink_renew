@@ -32,7 +32,6 @@ function RoomDetail() {
   };
 
   const roomHandler = () => {
-    console.log(room.maxUser);
     if (!titleValid(room.title)) {
       console.log('제목 미입력');
       return;
@@ -51,12 +50,12 @@ function RoomDetail() {
     socket?.emit('createRoom', { room, userData });
     closeRoomCreator();
 
-    socket.on('enterRoom', (url) => {
+    socket?.on('enterRoom', (url) => {
       navigate(`/room/${url}`);
     });
 
     return () => {
-      socket.off('enterRoom');
+      socket?.off('enterRoom');
     };
   };
 
@@ -73,7 +72,7 @@ function RoomDetail() {
             onChange={(e) => {
               setRoom({ ...room, title: e.target.value });
             }}
-            maxLength={16}
+            maxLength={15}
           />
           <p className={style.room_title}>상세설정</p>
           <div className={style.room_settings}>
@@ -130,7 +129,7 @@ function RoomDetail() {
 }
 
 function titleValid(title: string) {
-  const titleChk = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]{2,16}$/;
+  const titleChk = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]{2,15}$/;
   return titleChk.test(title);
 }
 

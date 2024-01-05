@@ -9,6 +9,7 @@ import { userDataAtom, userStatusAtom } from '../../recoil/user';
 import { lobbyChat } from '../../recoil/chat';
 import { noticeList, roomList } from '../../recoil/detail';
 import RoomDetail from './components/detail/RoomDetail';
+import axios from 'axios';
 
 function Lobby() {
   const socket = useRecoilValue(socketAtom);
@@ -17,8 +18,21 @@ function Lobby() {
   const [status, setStatus] = useRecoilState(userStatusAtom);
   const [chat, setChat] = useRecoilState(lobbyChat);
   const [room, setRoom] = useRecoilState(roomList);
-  const notice = useRecoilValue(noticeList);
+  const [notice, setNotice] = useRecoilState(noticeList);
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    axios({
+      method: 'GET',
+      url: '/api/lobby/notice',
+    })
+      .then((res) => {
+        setNotice(res.data?.notice);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     socket?.emit('enterLobby', userData);
@@ -26,38 +40,27 @@ function Lobby() {
       setUserData({ ...data });
     });
 
-    let timer = setTimeout(() => {
-      if (notice.length > 0) {
-        setLoading(true);
-      }
-    }, 2000);
-
-    return () => {
-      socket?.off('userInfo');
-      clearTimeout(timer);
-    };
-  }, []);
-
-  useEffect(() => {
     socket?.on('memberList', (data) => {
       setStatus([...data]);
     });
 
-    return () => {
-      socket?.off('memberList');
-    };
-  }, [status]);
-
-  useEffect(() => {
     socket?.on('roomList', (data) => {
-      console.log(data);
       setRoom([...data]);
     });
 
+    let timer = setTimeout(() => {
+      if (socket && notice.length > 0) {
+        setLoading(true);
+      }
+    }, 1000);
+
     return () => {
+      socket?.off('userInfo');
+      socket?.off('memberList');
       socket?.off('roomList');
+      clearTimeout(timer);
     };
-  }, [room]);
+  }, [socket, notice]);
 
   useEffect(() => {
     socket?.on('broadcastLobby', (data) => {

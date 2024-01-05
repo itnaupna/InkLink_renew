@@ -9,7 +9,6 @@ exports.roomController = {
       }
 
       if (!data.room.maxUser) {
-        console.log(data.room.curUser);
         console.log('최대인원 미선택');
         return;
       }
@@ -19,12 +18,16 @@ exports.roomController = {
         return;
       }
 
+      if (roomList.length >= 999) {
+        console.log('최대 방생성 갯수 초과');
+        return;
+      }
+
       if (!data.room.private) {
         data.password = '';
       }
 
       const roomId = Math.random().toString(36).substring(2, 11);
-
       roomNum++;
       data.userData.location = roomNum;
       data.room.roomId = roomId;
@@ -41,20 +44,29 @@ exports.roomController = {
       if (idx !== -1) {
         connectedUsers[idx].location = roomNum;
       }
+
       //나중에 refresh로 바꿀것
       io.emit('roomList', roomList);
       io.emit('memberList', connectedUsers);
       socket.emit('enterRoom', roomId);
+    });
 
-      socket.on('joinRoom', (data) => {
-        console.log(data);
+    socket.on('joinRoom', (data) => {
+      console.log(data);
+      const idx = roomList.findIndex((item) => {
+        return item.roomId === data.roomId;
       });
+
+      if (idx !== -1) {
+      }
+
+      console.log(idx);
     });
   },
 };
 
 function titleValid(title) {
-  const titleChk = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]{2,16}$/;
+  const titleChk = /^[a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ ]{2,15}$/;
   return titleChk.test(title);
 }
 

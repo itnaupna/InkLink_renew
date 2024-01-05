@@ -17,14 +17,14 @@ const socket = async (server) => {
   });
 
   io.on('connection', (socket) => {
-    console.log('Socket >>> Connected' + socket.id);
-    // console.log(socket);
+    console.log('Socket >>> Connected : ' + socket.id);
 
-    socket.on('eong',d=>roomSocket.test(d,io,socket));
-    
-    socket.on('connected', (data) => {
-      console.log(data);
-    });
+    socket.on('eong', (d) => roomSocket.test(d, io, socket));
+
+    // socket.on('connected', (data) => {
+    //   console.log(data);
+    // });
+
     socket.on('enterLobby', (data) => {
       const idx = connectedUsers.findIndex((item) => {
         return item.nick === data.nick;

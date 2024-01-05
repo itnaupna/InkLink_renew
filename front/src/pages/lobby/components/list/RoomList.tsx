@@ -30,9 +30,10 @@ function RoomList() {
     setDetail({ ...detail, room: true });
   };
 
-  const joinRoom = (id: string) => {
-    socket.emit('joinRoom');
-    navigate(`/room/${id}`);
+  const joinRoom = (roomId: string) => {
+    console.log(roomId);
+    socket?.emit('joinRoom', { roomId });
+    // navigate(`/room/${id}`);
   };
 
   return (
@@ -61,10 +62,14 @@ function RoomList() {
         </div>
         <div className={style.list}>
           {room.map((item, idx) => {
+            let roomNum: number = item.roomNum.toString().length;
+
             return (
               <div key={idx} className={style.list_item}>
                 <div className={style.list_item_left}>
-                  <div className={style.room_no}>{item.roomNum}</div>
+                  <div className={style.room_no}>
+                    {roomNum === 1 ? '00' + item.roomNum : roomNum === 2 ? '0' + item.roomNum : item.roomNum}
+                  </div>
                   <div className={style.room_user}>
                     <img alt="user-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/user_icon.svg'} />
                     <p>
@@ -74,7 +79,7 @@ function RoomList() {
                 </div>
                 <div className={style.list_item_right}>
                   <div className={style.room_name}>
-                    <p>{item.roomId}</p>
+                    <p>{item.title}</p>
                     {item.private ? (
                       <img alt="user-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/lock_icon.svg'} />
                     ) : null}

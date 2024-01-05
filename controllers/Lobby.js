@@ -10,7 +10,7 @@ exports.lobbyController = {
 
       if (!data.location || data.location !== 'lobby') {
         data.location = 'lobby';
-        console.log('접속 >>> ' + data);
+        console.log('재접속 >>> ' + data);
       }
 
       socket.join(data.location);
