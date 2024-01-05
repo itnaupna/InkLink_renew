@@ -8,7 +8,7 @@ const salts = 10;
 let mongo = require('../db/dbcon');
 const { jwt } = require('../api/jwt');
 const { ObjectId, UUID } = require('mongodb');
-const { getGuestNick } = require('../api/etc');
+const { getGuestNick, generateRes } = require('../api/etc');
 
 exports.loginController = {
   doFreshLogin: async (req, res) => {
@@ -18,11 +18,13 @@ exports.loginController = {
       // data.pw = await bcrypt.hash(data.pw, salts);
       console.log(data);
       let user = await db.findOne({ id: data.id });
+      
       if (user) {
         const isVaildPw = await bcrypt.compare(data.pw, user.pw);
         if (isVaildPw) {
           //jwt 생성 후 쿠키설정 및 정보반환
           const token = await getJwtToken([user._id, user.uuid]);
+          console.log(user._id.toString());
           res.cookie('t', token, { httpOnly: true });
           const data = {
             nick: user.nick,
@@ -33,7 +35,7 @@ exports.loginController = {
             role: user.role,
             item: user.item,
           };
-          return res.status(200).json({ success: true, data });
+          return res.status(200).json({ success: true, data,eong:generateRes(user._id.toString()) });
         } else {
           res.cookie('t', '', { httpOnly: true });
           return res.status(401).json({ success: false, msg: '아이디 또는 비밀번호를 다시 확인해주세요.' });
@@ -50,7 +52,8 @@ exports.loginController = {
     }
   },
   doReconnect: async (req, res) => {
-    let resultData;
+    let data;
+    let eong='';
     try {
       let tokenStr = req.cookies.t;
       if (!tokenStr) return;
@@ -64,7 +67,7 @@ exports.loginController = {
         });
 
         if (user) {
-          resultData = {
+          data = {
             nick: user.nick,
             email: user.email,
             total: user.total,
@@ -73,9 +76,10 @@ exports.loginController = {
             role: user.role,
             item: user.item,
           };
+          eong = user._id.toString();
         }
       } catch {
-        resultData = {
+        data = {
           nick: '애옹',
           email: '',
           total: 0,
@@ -90,7 +94,7 @@ exports.loginController = {
       console.error(`! ERR >>> ${err}`);
     } finally {
       mongo.close();
-      return res.status(200).json(resultData);
+      return res.status(200).json({data,eong:generateRes(eong)});
     }
   },
   //DONOTUSE
@@ -110,6 +114,7 @@ exports.loginController = {
 
     res.cookie('t', token, { httpOnly: true });
     return res.status(200).json({ success: true, data });
+    // return res.status(200).json({ success: true, data, eong: generateRes(user._id.toString()) });
   },
 };
 

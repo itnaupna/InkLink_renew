@@ -2,9 +2,17 @@ const { Server } = require('socket.io');
 const { roomSocket } = require('./roomSocket');
 const { lobbyController } = require('../controllers/Lobby');
 const { roomController } = require('../controllers/Room');
+const { Game } = require('../class/game');
 
 const connectedUsers = [];
 const roomList = [];
+
+const game = new Game();
+const mongo = require('../db/dbcon');
+const { ObjectId } = require('mongodb');
+const { generateRaw } = require('./etc');
+
+
 
 const socket = async (server) => {
   const io = new Server(server, {
@@ -14,17 +22,35 @@ const socket = async (server) => {
       transports: ['websocket', 'polling'],
       credentials: true,
     },
+    // pingTimeout: 50000,
+    // pingInterval: 50000,
+
   });
 
-  io.on('connection', (socket) => {
-    console.log('Socket >>> Connected' + socket.id);
-    // console.log(socket);
-
-    socket.on('eong',d=>roomSocket.test(d,io,socket));
+  io.on('connection', async (socket) => {
+    console.log('Socket >>> Connected ' + socket.id + "\n" + JSON.stringify(socket.handshake.query));
     
-    socket.on('connected', (data) => {
-      console.log(data);
-    });
+
+    let v = await verify(socket.handshake.query.eong);
+    if (!v) {
+      console.log('비정상적인 소켓연결');
+      socket.disconnect(true);
+      return;
+    } else {
+      let data = {
+        nick: v.nick,
+        total: v.total,
+        current: v.current,
+        profile: v.profile,
+        role: v.role,
+        socket_id: socket.id,
+        location: socket.handshake.query.location,
+      };
+      game.connectUser(data);
+      socket.join(data.location);
+      socket.emit('initSocket',{id:data.socket_id,loc:data.location});
+    }
+
     socket.on('enterLobby', (data) => {
       const idx = connectedUsers.findIndex((item) => {
         return item.nick === data.nick;
@@ -39,7 +65,10 @@ const socket = async (server) => {
       socket.emit('userInfo', userData);
       io.emit('memberList', connectedUsers);
       io.emit('roomList', roomList);
+      // io.emit('test',"game.userList");
+      // io.emit('test',)
     });
+
 
     socket.on('disconnect', () => {
       console.log('Socket >>> Disconnected : ' + socket.id);
@@ -54,7 +83,26 @@ const socket = async (server) => {
 
     lobbyController.socket(socket, io, connectedUsers);
     roomController.socket(socket, io, roomList, connectedUsers);
+    roomController.sk(socket,io,game);
   });
 };
+
+const verify = async (eong) => {
+  try {
+    // console.log('verify >> ' +  eong);
+    let decode = generateRaw(eong);
+    let db = await mongo.connect('member');
+    let res = await db.findOne({ _id: new ObjectId(generateRaw(eong))});
+    // console.log(res);
+    
+    return res || false;
+  } catch (ex){
+    console.log(ex);
+    return false;
+  } finally {
+    // console.log('verify >> ' +  eong);
+    await mongo.close();
+  }
+}
 
 module.exports = socket;

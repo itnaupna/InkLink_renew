@@ -45,6 +45,38 @@ exports.roomController = {
       io.emit('memberList', connectedUsers);
     });
   },
+  sk:(socket,io,game) => {
+    socket.on('createRoom', (data) => {
+      if (!titleValid(data.room.title)) {
+        console.log('제목 미입력');
+        return;
+      }
+
+      if (data.room.maxUser === 0) {
+        console.log(data.room.curUser);
+        console.log('최대인원 미선택');
+        return;
+      }
+
+      if (data.room.private && !passwordValid(data.room.password)) {
+        console.log('비밀번호 미입력');
+        return;
+      }
+
+      if (!data.room.private) {
+        data.password = '';
+      }
+
+      const roomId = Math.random().toString(36).substring(2, 11);
+
+      game.createRoom(roomId,data.room.title,data.room.curUser,data.room.password);
+      game.changeLocation(socket.id,roomId);
+
+      io.emit('roomList', roomList); //바꿔야함
+      io.to('main').emit('roomList',game.getAlls())
+      io.emit('memberList', connectedUsers); //바꿔야함
+    });
+  }
 };
 
 function titleValid(title) {

@@ -3,7 +3,7 @@ import style from './LoginBox.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { userDataAtom } from '../../../recoil/user';
+import { socketVerifyCodeAtom, userDataAtom } from '../../../recoil/user';
 
 const LoginBox = () => {
     const navi = useNavigate();
@@ -12,6 +12,7 @@ const LoginBox = () => {
         id: '',
         pw: '',
     });
+    const setCode = useSetRecoilState(socketVerifyCodeAtom);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         let data = e.target.value;
@@ -28,6 +29,7 @@ const LoginBox = () => {
             axios.post('/api/login', { inputs }).then(res => {
                 try {
                     setUserData(res.data.data);
+                    setCode(res.data.eong);
                 } catch {
                     alert('로그인에 실패하였습니다. 다시 시도하여 주세요.');
                 }
@@ -40,6 +42,7 @@ const LoginBox = () => {
         axios.post('/api/loginguest').then(res=>{
             try{
                 setUserData(res.data.data);
+                setCode(res.data.eong);
             }catch{
                 alert('접속에 실패하였습니다. 다시 시도하여 주세요.');
             }
