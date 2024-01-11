@@ -16,6 +16,10 @@ function Chat() {
   const userData = useRecoilValue(userDataAtom);
   const msgRef = useRef<HTMLInputElement>(null);
 
+  useEffect(()=>{
+    console.log(chat);
+  },[chat]);
+
   useEffect(() => {
     modalHandler(style, main.chat, setVisible, setFade);
   }, [main.chat]);
@@ -27,8 +31,8 @@ function Chat() {
   };
 
   const msgHandler = () => {
-    if (msgRef.current) {
-      socket?.emit('lobbyMsg', { msg: msgRef.current.value });
+    if (msgRef.current && msgRef.current.value.trim().length > 0) {
+      socket?.emit('postChat', { msg: msgRef.current.value });
       msgRef.current.value = '';
     }
   };
@@ -57,12 +61,12 @@ function Chat() {
                     <span className={style.chat_enter_id}>{item.user}</span>
                     <span>님이 입장하셨습니다.</span>
                   </div>
-                ) : (
+                ) : item.type === 'chat' ? (
                   <div key={idx} className={style.chat_msg}>
                     <span className={style.chat_id}>{item.user}</span>
                     <span>: {item.msg}</span>
                   </div>
-                );
+                ) : null;
               })}
             </div>
           </div>
