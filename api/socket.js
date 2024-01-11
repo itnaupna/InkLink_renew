@@ -22,13 +22,10 @@ const socket = async (server) => {
       transports: ['websocket', 'polling'],
       credentials: true,
     },
-    // pingTimeout: 50000,
-    // pingInterval: 50000,
-
   });
 
   io.on('connection', async (socket) => {
-    console.log('Socket >>> Connected ' + socket.id + "\n" + JSON.stringify(socket.handshake.query));
+    // console.log('Socket >>> Connected ' + socket.id + "\n" + JSON.stringify(socket.handshake.query));
     
 
     let v = await verify(socket.handshake.query.eong);
@@ -48,6 +45,7 @@ const socket = async (server) => {
       };
       game.connectUser(data);
       socket.join(data.location);
+      // console.log(data.location);
       socket.emit('initSocket',{id:data.socket_id,loc:data.location});
     }
 
@@ -84,6 +82,7 @@ const socket = async (server) => {
     lobbyController.socket(socket, io, connectedUsers);
     roomController.socket(socket, io, roomList, connectedUsers);
     roomController.sk(socket,io,game);
+    
   });
 };
 

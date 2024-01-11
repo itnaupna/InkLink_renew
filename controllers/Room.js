@@ -71,7 +71,7 @@ exports.roomController = {
 
       game.createRoom(roomId,data.room.title,data.room.curUser,data.room.password);
       game.changeLocation(socket.id,roomId);
-
+      socket.join
       io.emit('roomList', roomList); //바꿔야함
       io.to('main').emit('roomList',game.getAlls())
       io.emit('memberList', connectedUsers); //바꿔야함

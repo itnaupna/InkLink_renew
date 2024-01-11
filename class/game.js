@@ -8,7 +8,9 @@ var defaultSetting = {
     round: 3,
     useCustom: false,
     customs: [],
-    owner: ''
+    owner: '',
+    hintType: 0,
+    topicType: 0
 };
 var Room = /** @class */ (function () {
     function Room(id, title, maxUser, password, number) {
@@ -43,7 +45,9 @@ var Room = /** @class */ (function () {
         this._users = this._users.filter(function (user) { return user.socket_id !== socket_id; });
         return this._users.length;
     };
-    Room.prototype.changeSetting = function (data) {
+    Room.prototype.changeSetting = function (socket_id, data) {
+        if (socket_id !== this._setting.owner)
+            return false;
         switch (data[0]) {
             case 0:
                 this._setting.lang = data[1];
@@ -63,7 +67,14 @@ var Room = /** @class */ (function () {
             case 5:
                 this._setting.customs = data[1];
                 break;
+            case 6:
+                this._setting.hintType = data[1];
+                break;
+            case 7:
+                this._setting.topicType = data[1];
+                break;
         }
+        return true;
     };
     Object.defineProperty(Room.prototype, "users", {
         get: function () { return this._users; },
@@ -117,6 +128,28 @@ var Game = /** @class */ (function () {
     Game.prototype.connectUser = function (data) {
         this._userList.push(data);
     };
+    //유저 위치변경로직2
+    Game.prototype.changeLocation2 = function (socket, location) {
+        var oldRoom = socket.rooms;
+        oldRoom.forEach(function (v) {
+            socket.leave(v);
+        });
+        var newRoom = this.getRoomById(location);
+        if (newRoom) {
+            socket.join(location);
+            var user = this._userList.find(function (v) { return v.socket_id === socket.id; });
+            if (user) {
+                newRoom.addUser({
+                    socket_id: socket.id,
+                    current: user.current,
+                    nick: user.nick,
+                    profile: user.profile,
+                    status: 0,
+                    total: user.total,
+                });
+            }
+        }
+    };
     //유저 위치변경
     Game.prototype.changeLocation = function (socket_id, location) {
         if (location !== 'main') {
@@ -145,6 +178,22 @@ var Game = /** @class */ (function () {
     //유저 연결끊김
     Game.prototype.disconnectUser = function (socket_id) {
         this._userList = this._userList.filter(function (v) { return v.socket_id !== socket_id; });
+    };
+    Game.prototype.whereAmI = function (socket_id) {
+        //console.log(socket.rooms); {<socket-id>,'room'};
+        /*
+        const room = io.sockets.adapter.rooms[roomId];
+
+        if (room && room.sockets) {
+        // 해당 방에 속한 소켓들의 ID 목록을 얻을 수 있습니다.
+        const socketsInRoom = Object.keys(room.sockets);
+        console.log(`소켓이 ${roomId} 방에 속해있습니다. 소켓 ID 목록: ${socketsInRoom}`);
+        } else {
+        console.log(`소켓이 ${roomId} 방에 속해있지 않습니다.`);
+        }
+        */
+        // const user = this._userList.find(v=>v.socket_id===socket_id);
+        // return user?.location || null;
     };
     //방목록, 유저목록 반환
     Game.prototype.getAlls = function () {
