@@ -5,7 +5,7 @@ import { mobileModal } from '../../recoil/lobby';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
 import { socketAtom } from '../../recoil/socket';
-import { userDataAtom, userStatusAtom } from '../../recoil/user';
+import { userStatusAtom } from '../../recoil/user';
 import { lobbyChat } from '../../recoil/chat';
 import { noticeList, roomList } from '../../recoil/detail';
 import RoomDetail from './components/detail/RoomDetail';
@@ -14,7 +14,6 @@ import axios from 'axios';
 function Lobby() {
   const socket = useRecoilValue(socketAtom);
   const setMenu = useSetRecoilState(mobileModal);
-  const [userData, setUserData] = useRecoilState(userDataAtom);
   const [status, setStatus] = useRecoilState(userStatusAtom);
   const [chat, setChat] = useRecoilState(lobbyChat);
   const [room, setRoom] = useRecoilState(roomList);
@@ -35,17 +34,12 @@ function Lobby() {
   }, []);
 
   useEffect(() => {
-    socket?.emit('enterLobby', userData);
-    socket?.on('userInfo', (data) => {
-      setUserData({ ...data });
-    });
+    socket?.emit('enterLobby');
 
-    socket?.on('memberList', (data) => {
-      setStatus([...data]);
-    });
-
-    socket?.on('roomList', (data) => {
-      setRoom([...data]);
+    socket?.on('getListData', (data): void => {
+      console.log(data);
+      setStatus([...data.users]);
+      setRoom([...data.rooms]);
     });
 
     let timer = setTimeout(() => {
@@ -55,9 +49,7 @@ function Lobby() {
     }, 1000);
 
     return () => {
-      socket?.off('userInfo');
-      socket?.off('memberList');
-      socket?.off('roomList');
+      socket?.off('getListData');
       clearTimeout(timer);
     };
   }, [socket, notice]);

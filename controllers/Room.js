@@ -63,7 +63,7 @@ exports.roomController = {
       console.log(idx);
     });
   },
-  sk:(socket,io,game) => {
+  sk: (socket, io, game) => {
     socket.on('createRoom', (data) => {
       if (!titleValid(data.room.title)) {
         console.log('제목 미입력');
@@ -87,14 +87,14 @@ exports.roomController = {
 
       const roomId = Math.random().toString(36).substring(2, 11);
 
-      game.createRoom(roomId,data.room.title,data.room.curUser,data.room.password);
-      game.changeLocation(socket.id,roomId);
+      game.createRoom(roomId, data.room.title, data.room.curUser, data.room.password);
+      game.changeLocation(socket.id, roomId);
 
       io.emit('roomList', roomList); //바꿔야함
-      io.to('main').emit('roomList',game.getAlls())
+      io.to('main').emit('roomList', game.getAlls());
       io.emit('memberList', connectedUsers); //바꿔야함
     });
-  }
+  },
 };
 
 function titleValid(title) {

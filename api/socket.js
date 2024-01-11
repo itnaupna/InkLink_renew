@@ -1,18 +1,13 @@
 const { Server } = require('socket.io');
 const { roomSocket } = require('./roomSocket');
-const { lobbyController } = require('../controllers/Lobby');
+const { chatController } = require('../controllers/Chat');
 const { roomController } = require('../controllers/Room');
 const { Game } = require('../class/game');
-
-const connectedUsers = [];
-const roomList = [];
 
 const game = new Game();
 const mongo = require('../db/dbcon');
 const { ObjectId } = require('mongodb');
 const { generateRaw } = require('./etc');
-
-
 
 const socket = async (server) => {
   const io = new Server(server, {
@@ -27,8 +22,7 @@ const socket = async (server) => {
   });
 
   io.on('connection', async (socket) => {
-    console.log('Socket >>> Connected ' + socket.id + "\n" + JSON.stringify(socket.handshake.query));
-    
+    console.log('Socket >>> Connected ' + socket.id + '\n' + JSON.stringify(socket.handshake.query));
 
     let v = await verify(socket.handshake.query.eong);
     if (!v) {
@@ -46,43 +40,21 @@ const socket = async (server) => {
         location: socket.handshake.query.location,
       };
       game.connectUser(data);
-      socket.join(data.location);
-      socket.emit('initSocket',{id:data.socket_id,loc:data.location});
+      socket.emit('initSocket', { id: data.socket_id, loc: data.location });
     }
 
-    socket.on('enterLobby', (data) => {
-      const idx = connectedUsers.findIndex((item) => {
-        return item.nick === data.nick;
-      });
-
-      if (idx !== -1) {
-        connectedUsers.splice(idx, 1);
-      }
-
-      const userData = { socket_id: socket.id, location: 'main', ...data };
-      connectedUsers.push(userData);
-      socket.emit('userInfo', userData);
-      io.emit('memberList', connectedUsers);
-      io.emit('roomList', roomList);
-      // io.emit('test',"game.userList");
-      // io.emit('test',)
+    socket.on('enterLobby', () => {
+      io.emit('getListData', game.getAlls());
     });
-
 
     socket.on('disconnect', () => {
       console.log('Socket >>> Disconnected : ' + socket.id);
-      const idx = connectedUsers.findIndex((item) => {
-        return item.socket_id === socket.id;
-      });
-      if (idx !== -1) {
-        connectedUsers.splice(idx, 1);
-      }
-      io.emit('memberList', connectedUsers);
+      game.disconnectUser(socket.id);
     });
 
-    lobbyController.socket(socket, io, connectedUsers);
-    roomController.socket(socket, io, roomList, connectedUsers);
-    roomController.sk(socket,io,game);
+    chatController.socket(socket, io, game);
+    // roomController.socket(socket, io, roomList, connectedUsers);
+    // roomController.sk(socket, io, game);
   });
 };
 
@@ -91,17 +63,17 @@ const verify = async (eong) => {
     // console.log('verify >> ' +  eong);
     let decode = generateRaw(eong);
     let db = await mongo.connect('member');
-    let res = await db.findOne({ _id: new ObjectId(generateRaw(eong))});
+    let res = await db.findOne({ _id: new ObjectId(generateRaw(eong)) });
     // console.log(res);
-    
+
     return res || false;
-  } catch (ex){
+  } catch (ex) {
     console.log(ex);
     return false;
   } finally {
     // console.log('verify >> ' +  eong);
     await mongo.close();
   }
-}
+};
 
 module.exports = socket;

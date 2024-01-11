@@ -28,7 +28,7 @@ function Chat() {
 
   const msgHandler = () => {
     if (msgRef.current) {
-      socket?.emit('lobbyMsg', { ...userData, msg: msgRef.current.value });
+      socket?.emit('lobbyMsg', { msg: msgRef.current.value });
       msgRef.current.value = '';
     }
   };
@@ -47,10 +47,15 @@ function Chat() {
           <div className={style.chat_field}>
             <div className={style.chat_content}>
               {chat.map((item, idx) => {
-                return item.type === 'enter' ? (
+                return item.type === 'notice' ? (
                   <div key={idx} className={style.chat_notice}>
                     <span className={style.chat_enter_id}>{item.user}</span>
                     <span>{item.msg}</span>
+                  </div>
+                ) : item.type === 'enter' ? (
+                  <div key={idx} className={style.chat_notice}>
+                    <span className={style.chat_enter_id}>{item.user}</span>
+                    <span>님이 입장하셨습니다.</span>
                   </div>
                 ) : (
                   <div key={idx} className={style.chat_msg}>

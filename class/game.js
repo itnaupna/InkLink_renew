@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Game = void 0;
+exports.Chat = exports.Game = void 0;
 var defaultSetting = {
     lang: 0,
     max: 8,
@@ -8,7 +8,7 @@ var defaultSetting = {
     round: 3,
     useCustom: false,
     customs: [],
-    owner: ''
+    owner: '',
 };
 var Room = /** @class */ (function () {
     function Room(id, title, maxUser, password, number) {
@@ -29,7 +29,7 @@ var Room = /** @class */ (function () {
             currentUser: this._users.length,
             maxUser: this._setting.max,
             password: this._password,
-            status: this._status
+            status: this._status,
         };
     };
     Room.prototype.addUser = function (data) {
@@ -66,30 +66,43 @@ var Room = /** @class */ (function () {
         }
     };
     Object.defineProperty(Room.prototype, "users", {
-        get: function () { return this._users; },
+        get: function () {
+            return this._users;
+        },
         enumerable: false,
         configurable: true
     });
     Object.defineProperty(Room.prototype, "setting", {
-        get: function () { return this._setting; },
+        get: function () {
+            return this._setting;
+        },
         enumerable: false,
         configurable: true
     });
     Object.defineProperty(Room.prototype, "id", {
-        get: function () { return this._id; },
+        get: function () {
+            return this._id;
+        },
         enumerable: false,
         configurable: true
     });
     Object.defineProperty(Room.prototype, "answer", {
-        get: function () { return this._answer; },
-        set: function (answer) { this._answer = answer; },
+        get: function () {
+            return this._answer;
+        },
+        set: function (answer) {
+            this._answer = answer;
+        },
         enumerable: false,
         configurable: true
     });
-    ;
     Object.defineProperty(Room.prototype, "timer", {
-        get: function () { return this._timer; },
-        set: function (sec) { this._timer = sec; },
+        get: function () {
+            return this._timer;
+        },
+        set: function (sec) {
+            this._timer = sec;
+        },
         enumerable: false,
         configurable: true
     });
@@ -135,12 +148,12 @@ var Game = /** @class */ (function () {
                         total: user_1.total,
                     });
             }
-            else {
-            }
         }
         var user = this._userList.find(function (v) { return v.socket_id === socket_id; });
+        console.log(user);
         if (user)
             user.location = location;
+        return user;
     };
     //유저 연결끊김
     Game.prototype.disconnectUser = function (socket_id) {
@@ -150,7 +163,7 @@ var Game = /** @class */ (function () {
     Game.prototype.getAlls = function () {
         return {
             rooms: this.roomList,
-            users: this.userList
+            users: this.userList,
         };
     };
     Object.defineProperty(Game.prototype, "roomList", {
@@ -172,3 +185,25 @@ var Game = /** @class */ (function () {
     return Game;
 }());
 exports.Game = Game;
+var Chat = /** @class */ (function () {
+    function Chat() {
+        this.type = '';
+        this.user = '';
+        this.location = '';
+        this.msg = '';
+        this.connected = false;
+    }
+    Chat.prototype.joinRoom = function (socket_id, game, type, location) {
+        var user = game.changeLocation(socket_id, location);
+        this.type = type;
+        this.user = user.nick;
+        this.location = user.location;
+        this.connected = true;
+    };
+    Chat.prototype.sendMessage = function (msg) {
+        this.type = 'message';
+        this.msg = msg;
+    };
+    return Chat;
+}());
+exports.Chat = Chat;
