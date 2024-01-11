@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import style from './main.module.css';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { mainModal, detailModal } from '../../../../recoil/lobby';
 import { noticeDetail, noticeList } from '../../../../recoil/detail';
-import axios from 'axios';
 
 function Notice() {
   const [main, setMain] = useRecoilState(mainModal);
@@ -11,7 +10,7 @@ function Notice() {
   const [fade, setFade] = useState<string>(style.notice_hide);
   const [down, setDown] = useState<string>('');
   const [detail, setDetail] = useRecoilState(detailModal);
-  const [notice, setNotice] = useRecoilState(noticeList);
+  const notice = useRecoilValue(noticeList);
   const setNoticeDetail = useSetRecoilState(noticeDetail);
 
   useEffect(() => {
@@ -32,19 +31,6 @@ function Notice() {
       clearTimeout(timer);
     };
   }, [main.notice]);
-
-  useEffect(() => {
-    axios({
-      method: 'GET',
-      url: '/api/lobby/notice',
-    })
-      .then((res) => {
-        setNotice(res.data?.notice);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
 
   const dropDownHandler = () => {
     setMain({ ...main, notice: !main.notice });

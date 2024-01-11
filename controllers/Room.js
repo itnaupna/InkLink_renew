@@ -8,8 +8,7 @@ exports.roomController = {
         return;
       }
 
-      if (data.room.maxUser === 0) {
-        console.log(data.room.curUser);
+      if (!data.room.maxUser) {
         console.log('최대인원 미선택');
         return;
       }
@@ -19,12 +18,16 @@ exports.roomController = {
         return;
       }
 
+      if (roomList.length >= 999) {
+        console.log('최대 방생성 갯수 초과');
+        return;
+      }
+
       if (!data.room.private) {
         data.password = '';
       }
 
       const roomId = Math.random().toString(36).substring(2, 11);
-
       roomNum++;
       data.userData.location = roomNum;
       data.room.roomId = roomId;
@@ -41,11 +44,26 @@ exports.roomController = {
       if (idx !== -1) {
         connectedUsers[idx].location = roomNum;
       }
+
+      //나중에 refresh로 바꿀것
       io.emit('roomList', roomList);
       io.emit('memberList', connectedUsers);
+      socket.emit('enterRoom', roomId);
+    });
+
+    socket.on('joinRoom', (data) => {
+      console.log(data);
+      const idx = roomList.findIndex((item) => {
+        return item.roomId === data.roomId;
+      });
+
+      if (idx !== -1) {
+      }
+
+      console.log(idx);
     });
   },
-  sk:(socket,io,game) => {
+  sk: (socket, io, game) => {
     socket.on('createRoom', (data) => {
       if (!titleValid(data.room.title)) {
         console.log('제목 미입력');
@@ -69,14 +87,14 @@ exports.roomController = {
 
       const roomId = Math.random().toString(36).substring(2, 11);
 
-      game.createRoom(roomId,data.room.title,data.room.curUser,data.room.password);
-      game.changeLocation(socket.id,roomId);
-      socket.join
+      game.createRoom(roomId, data.room.title, data.room.curUser, data.room.password);
+      game.changeLocation(socket.id, roomId);
+
       io.emit('roomList', roomList); //바꿔야함
-      io.to('main').emit('roomList',game.getAlls())
+      io.to('main').emit('roomList', game.getAlls());
       io.emit('memberList', connectedUsers); //바꿔야함
     });
-  }
+  },
 };
 
 function titleValid(title) {

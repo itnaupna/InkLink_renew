@@ -17,10 +17,10 @@ function Footer() {
     mainMenu(type, main, setMain);
 
     if (type === 'chat' && !main.chat) {
-      socket?.emit('lobbyChat', userData);
+      socket?.emit('lobbyChat');
 
       socket?.on('enterLobbyChat', (data) => {
-        setUserData({ ...userData, location: data.location });
+        console.log(data);
         setChat((prevChat) => [...prevChat, data]);
       });
     }

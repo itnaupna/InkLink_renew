@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
 const initialState: LobbyChatType = {
-  type: 'enter',
+  type: 'notice',
   user: '',
   msg: '*이쁜말 쓰자*',
 };

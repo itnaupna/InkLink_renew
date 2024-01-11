@@ -2,15 +2,7 @@ import { atom } from 'recoil';
 
 const noticeList = atom<NoticeType[]>({
   key: 'noticeList',
-  default: [
-    {
-      _id: '',
-      type: '',
-      title: '',
-      content: '',
-      date: '',
-    },
-  ],
+  default: [],
 });
 
 const noticeDetail = atom<NoticeType>({
@@ -46,7 +38,7 @@ const roomInfo = atom<RoomInfoType>({
     roomId: '',
     title: '',
     curUser: 0,
-    maxUser: 0,
+    maxUser: 8,
     userList: [],
     private: false,
     password: '',

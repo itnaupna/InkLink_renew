@@ -76,6 +76,9 @@ var Room = /** @class */ (function () {
         }
         return true;
     };
+    Room.prototype.canJoin = function () {
+        return this._setting.max === -1 || this._setting.max <= this._users.length;
+    };
     Object.defineProperty(Room.prototype, "users", {
         get: function () { return this._users; },
         enumerable: false,
@@ -111,6 +114,7 @@ var Game = /** @class */ (function () {
         this._roomNumber = 1;
         this._roomList = [];
         this._userList = [];
+        this.createRoom('main', '로비', -1, '');
     }
     //방생성
     Game.prototype.createRoom = function (id, title, maxUser, password) {
@@ -129,55 +133,91 @@ var Game = /** @class */ (function () {
         this._userList.push(data);
     };
     //유저 위치변경로직2
-    Game.prototype.changeLocation2 = function (socket, location) {
-        var oldRoom = socket.rooms;
-        oldRoom.forEach(function (v) {
-            socket.leave(v);
-        });
-        var newRoom = this.getRoomById(location);
-        if (newRoom) {
-            socket.join(location);
-            var user = this._userList.find(function (v) { return v.socket_id === socket.id; });
-            if (user) {
+    Game.prototype.changeLocation = function (io, socket, location) {
+        var _this = this;
+        //방 전환 성공 : return true;
+        //방 전환 실패 : return false;
+        try {
+            //유저 정보를 가져온다.
+            var user_1 = this._userList.find(function (v) { return v.socket_id === socket.id; });
+            //올바르지 않은 접근이면 false.
+            if (!user_1)
+                return false;
+            //신규방이 유효한 방인지 확인
+            var newRoom = this.getRoomById(location);
+            if (newRoom && newRoom.canJoin()) {
+                //기존 입장중인 방을 가져온다.
+                var oldRoom = socket.rooms;
+                //기존 방을 나가준다.
+                oldRoom.forEach(function (v) {
+                    //소켓 자체 방에서 나가주고
+                    socket.leave(v);
+                    var r = _this.getRoomById(v);
+                    //개별로 관리하는 목록에서도 나가준다.
+                    r === null || r === void 0 ? void 0 : r.delUserBySocketID(socket.id);
+                    io.to(v).emit('leaveUser', user_1.nick);
+                });
+                //소켓 자체 join처리
+                socket.join(location);
+                //해당 방에 유저를 추가해주고
                 newRoom.addUser({
                     socket_id: socket.id,
-                    current: user.current,
-                    nick: user.nick,
-                    profile: user.profile,
+                    current: user_1.current,
+                    nick: user_1.nick,
+                    profile: user_1.profile,
                     status: 0,
-                    total: user.total,
+                    total: user_1.total,
                 });
-            }
-        }
-    };
-    //유저 위치변경
-    Game.prototype.changeLocation = function (socket_id, location) {
-        if (location !== 'main') {
-            //접속한 방이 로비가 아닐경우
-            var room = this.getRoomById(location);
-            if (room) {
-                //방이 유효할경우 사람을 넣어준다.
-                var user_1 = this._userList.find(function (v) { return v.socket_id === socket_id; });
-                if (user_1)
-                    room.addUser({
-                        socket_id: socket_id,
-                        current: user_1.current,
-                        nick: user_1.nick,
-                        profile: user_1.profile,
-                        status: 0,
-                        total: user_1.total,
-                    });
+                //접속정보에서도 위치를 바꿔준다.
+                user_1.location = location;
+                //그리고 들어옴 메세지를 보내준다.
+                io.to(location).emit('postChat', {
+                    type: 'enter',
+                    user: user_1.nick,
+                    msg: ''
+                });
+                //로비일 경우 로비의 모두에게 최신화 시켜준다.
+                if (location === 'main') {
+                    io.to('main').emit('getListData', this.getAlls());
+                }
+                return true;
             }
             else {
+                //유효하지 않은 방이면
+                //main으로?
+                //방생성 후 입장?
+                //무작위 방 입장?
+                //지금은 false; 처리
             }
+            return false;
         }
-        var user = this._userList.find(function (v) { return v.socket_id === socket_id; });
-        if (user)
-            user.location = location;
+        catch (error) {
+            console.error(error);
+            return false;
+        }
+    };
+    Game.prototype.getNickBySocketID = function (socketID) {
+        var _a;
+        return ((_a = this._userList.find(function (v) { return v.socket_id === socketID; })) === null || _a === void 0 ? void 0 : _a.nick) || null;
     };
     //유저 연결끊김
-    Game.prototype.disconnectUser = function (socket_id) {
-        this._userList = this._userList.filter(function (v) { return v.socket_id !== socket_id; });
+    Game.prototype.disconnectUser = function (io, socketID) {
+        //유저 정보를 가져온다.
+        var user = this._userList.find(function (v) { return v.socket_id === socketID; });
+        //올바르지 않은 접근이면 false.
+        if (!user)
+            return false;
+        //유저가 접속해있던 위치에 관한 처리
+        var oldRoom = user.location;
+        var r = this.getRoomById(oldRoom);
+        //개별로 관리하는 목록에서도 나가준다.
+        r === null || r === void 0 ? void 0 : r.delUserBySocketID(socketID);
+        io.to(oldRoom).emit('leaveUser', user.nick);
+        if (oldRoom === 'main') {
+            io.to('main').emit('getListData', this.getAlls());
+        }
+        //접속정보목록에서도 제거해준다.
+        this._userList = this._userList.filter(function (v) { return v.socket_id !== socketID; });
     };
     Game.prototype.whereAmI = function (socket_id) {
         //console.log(socket.rooms); {<socket-id>,'room'};
@@ -213,7 +253,16 @@ var Game = /** @class */ (function () {
     Object.defineProperty(Game.prototype, "userList", {
         //유저목록 반환
         get: function () {
-            return this._userList;
+            var result;
+            result = this._userList.map(function (v) {
+                return {
+                    nick: v.nick,
+                    profile: v.profile,
+                    total: v.total,
+                    location: v.location
+                };
+            });
+            return result;
         },
         enumerable: false,
         configurable: true

@@ -5,59 +5,54 @@ import { mobileModal } from '../../recoil/lobby';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useEffect, useState } from 'react';
 import { socketAtom } from '../../recoil/socket';
-import { userDataAtom, userStatusAtom } from '../../recoil/user';
+import { userStatusAtom } from '../../recoil/user';
 import { lobbyChat } from '../../recoil/chat';
 import { noticeList, roomList } from '../../recoil/detail';
 import RoomDetail from './components/detail/RoomDetail';
+import axios from 'axios';
 
 function Lobby() {
   const socket = useRecoilValue(socketAtom);
   const setMenu = useSetRecoilState(mobileModal);
-  const [userData, setUserData] = useRecoilState(userDataAtom);
   const [status, setStatus] = useRecoilState(userStatusAtom);
   const [chat, setChat] = useRecoilState(lobbyChat);
   const [room, setRoom] = useRecoilState(roomList);
-  const notice = useRecoilValue(noticeList);
+  const [notice, setNotice] = useRecoilState(noticeList);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    socket?.emit('enterLobby', userData);
-    socket?.on('userInfo', (data) => {
-      setUserData({ ...data });
-    });
-
-    let timer = setTimeout(() => {
-      if (notice.length > 0) {
-        setLoading(true);
-      }
-    }, 2000);
-
-    return () => {
-      socket?.off('userInfo');
-      clearTimeout(timer);
-    };
+    axios({
+      method: 'GET',
+      url: '/api/lobby/notice',
+    })
+      .then((res) => {
+        setNotice(res.data?.notice);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   useEffect(() => {
-    socket?.on('memberList', (data) => {
-      setStatus([...data]);
-    });
+    socket?.emit('enterLobby');
 
-    return () => {
-      socket?.off('memberList');
-    };
-  }, [status]);
-
-  useEffect(() => {
-    socket?.on('roomList', (data) => {
+    socket?.on('getListData', (data): void => {
       console.log(data);
-      setRoom([...data]);
+      setStatus([...data.users]);
+      setRoom([...data.rooms]);
     });
 
+    let timer = setTimeout(() => {
+      if (socket && notice.length > 0) {
+        setLoading(true);
+      }
+    }, 1000);
+
     return () => {
-      socket?.off('roomList');
+      socket?.off('getListData');
+      clearTimeout(timer);
     };
-  }, [room]);
+  }, [socket, notice]);
 
   useEffect(() => {
     socket?.on('broadcastLobby', (data) => {

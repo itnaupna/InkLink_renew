@@ -4,6 +4,8 @@ import { detailModal, listModal, mainModal } from '../../../../recoil/lobby';
 import { useEffect, useState } from 'react';
 import { closeHandler, modalHandler } from '../../../../api/modal';
 import { roomList } from '../../../../recoil/detail';
+import { useNavigate } from 'react-router-dom';
+import { socketAtom } from '../../../../recoil/socket';
 
 function RoomList() {
   const [list, setList] = useRecoilState(listModal);
@@ -12,6 +14,8 @@ function RoomList() {
   const [fade, setFade] = useState<string>(style.fade_out);
   const [detail, setDetail] = useRecoilState(detailModal);
   const room = useRecoilValue(roomList);
+  const socket = useRecoilValue(socketAtom);
+  const navigate = useNavigate();
 
   useEffect(() => {
     modalHandler(style, list.room, setVisible, setFade);
@@ -24,6 +28,12 @@ function RoomList() {
 
   const createRoom = () => {
     setDetail({ ...detail, room: true });
+  };
+
+  const joinRoom = (roomId: string) => {
+    console.log(roomId);
+    socket?.emit('joinRoom', { roomId });
+    // navigate(`/room/${id}`);
   };
 
   return (
@@ -52,10 +62,14 @@ function RoomList() {
         </div>
         <div className={style.list}>
           {room.map((item, idx) => {
+            let roomNum: number = item.roomNum.toString().length;
+
             return (
               <div key={idx} className={style.list_item}>
                 <div className={style.list_item_left}>
-                  <div className={style.room_no}>{item.roomNum}</div>
+                  <div className={style.room_no}>
+                    {roomNum === 1 ? '00' + item.roomNum : roomNum === 2 ? '0' + item.roomNum : item.roomNum}
+                  </div>
                   <div className={style.room_user}>
                     <img alt="user-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/user_icon.svg'} />
                     <p>
@@ -65,7 +79,7 @@ function RoomList() {
                 </div>
                 <div className={style.list_item_right}>
                   <div className={style.room_name}>
-                    <p>{item.roomId}</p>
+                    <p>{item.title}</p>
                     {item.private ? (
                       <img alt="user-icon" src={process.env.REACT_APP_BUCKET_URL + 'icons/lock_icon.svg'} />
                     ) : null}
@@ -74,12 +88,16 @@ function RoomList() {
                     {item.waiting ? (
                       <>
                         <p className={style.waiting}>WAITING</p>
-                        <div className={style.enter_btn}>입장</div>
+                        <div className={style.enter_btn} onClick={() => joinRoom(item.roomId)}>
+                          입장
+                        </div>
                       </>
                     ) : (
                       <>
                         <p className={style.playing}>PLAYING</p>
-                        <div className={style.enter_btn}>입장</div>
+                        <div className={style.enter_btn} onClick={() => joinRoom(item.roomId)}>
+                          입장
+                        </div>
                       </>
                     )}
                   </div>
