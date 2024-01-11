@@ -29,6 +29,8 @@ const socket = async (server) => {
       socket.disconnect(true);
       return;
     } else {
+      const room = socket.handshake.query.location;
+      // console.log(room);
       let data = {
         nick: v.nick,
         total: v.total,
@@ -36,8 +38,9 @@ const socket = async (server) => {
         profile: v.profile,
         role: v.role,
         socket_id: socket.id,
-        location: socket.handshake.query.location,
+        location: game.getRoomById(room) ? room : 'main'
       };
+      console.log(`${socket.id} + ${data.location}`);
       game.connectUser(data);
       game.changeLocation(io,socket,data.location);
       // socket.join(data.location);

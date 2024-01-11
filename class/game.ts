@@ -12,17 +12,6 @@ interface roomSetting {
     topicType: number;  //7주제선정(0가중치,1다수결,2방장,3무작위,4모두)
     owner: string;      //방장 소켓ID
 }
-const defaultSetting: roomSetting = {
-    lang: 0,
-    max: 8,
-    limit: 60,
-    round: 3,
-    useCustom: false,
-    customs: [],
-    owner: '',
-    hintType: 0,
-    topicType: 0
-}
 interface User {
     socket_id: string;
     nick: string;
@@ -44,7 +33,17 @@ class Room {
     private _id: string;
     private _title: string;
     private _password: string;
-    private _setting: roomSetting = defaultSetting;
+    private _setting: roomSetting = {
+        lang: 0,
+        max: 8,
+        limit: 60,
+        round: 3,
+        useCustom: false,
+        customs: [],
+        owner: '',
+        hintType: 0,
+        topicType: 0
+    };
     private _status: number = 0;
     private _timer: number = 0;
     private _users: userInRoom[] = [];
@@ -120,7 +119,7 @@ class Room {
         return true;
     }
     canJoin() {
-        return this._setting.max === -1 || this._setting.max <= this._users.length;
+        return this._setting.max === -1 || this._setting.max > this._users.length;
     }
     get users() { return this._users; }
     get setting() { return this._setting; }
@@ -138,7 +137,8 @@ class Game {
     constructor() {
         this._roomList = [];
         this._userList = [];
-        this.createRoom('main', '로비', -1, '');
+        this.createRoom('main', '로비', 9, '');
+        this.createRoom('test', '테스트', 8, '');
     }
 
     //방생성
@@ -172,7 +172,6 @@ class Game {
             if (!user) return false;
             //신규방이 유효한 방인지 확인
             const newRoom = this.getRoomById(location);
-
             if (newRoom && newRoom.canJoin()) {
                 //기존 입장중인 방을 가져온다.
                 const oldRoom = socket.rooms;
@@ -181,9 +180,17 @@ class Game {
                     //소켓 자체 방에서 나가주고
                     socket.leave(v);
                     const r = this.getRoomById(v);
-                    //개별로 관리하는 목록에서도 나가준다.
-                    r?.delUserBySocketID(socket.id);
-                    io.to(v).emit('leaveUser', user.nick);
+                    if (r) {
+                        //개별로 관리하는 목록에서도 나가준다.
+                        r.delUserBySocketID(socket.id);
+                        //모든 인원이 나갔으면 방을 삭제한다.
+                        // if (r.users.length === 0) {
+                        if (r.users.length === 0 && r.id !== 'test') { //테스트방이 아닐때만 삭제.
+                            this.deleteRoom(v);
+                        } else {
+                            io.to(v).emit('leaveUser', user.nick);
+                        }
+                    }
                 });
                 //소켓 자체 join처리
                 socket.join(location);
@@ -200,7 +207,6 @@ class Game {
 
                 //접속정보에서도 위치를 바꿔준다.
                 user.location = location;
-
                 //그리고 들어옴 메세지를 보내준다.
                 io.to(location).emit('postChat', {
                     type: 'enter',
@@ -208,18 +214,9 @@ class Game {
                     msg: ''
                 });
 
-                //로비일 경우 로비의 모두에게 최신화 시켜준다.
-                if (location === 'main') {
-                    io.to('main').emit('getListData', this.getAlls());
-                }
-
+                //로비의 모두에게 최신화 시켜준다.
+                io.to('main').emit('getListData', this.getAlls());
                 return true;
-            }else{
-                //유효하지 않은 방이면
-                //main으로?
-                //방생성 후 입장?
-                //무작위 방 입장?
-                //지금은 false; 처리
             }
             return false;
         } catch (error) {
@@ -235,22 +232,29 @@ class Game {
     //유저 연결끊김
     disconnectUser(io: Server, socketID: string) {
         //유저 정보를 가져온다.
+        // const socket = io.sockets.sockets[socketID];
+
         const user = this._userList.find(v => v.socket_id === socketID);
         //올바르지 않은 접근이면 false.
         if (!user) return false;
+
 
         //유저가 접속해있던 위치에 관한 처리
         const oldRoom = user.location;
         const r = this.getRoomById(oldRoom);
         //개별로 관리하는 목록에서도 나가준다.
         r?.delUserBySocketID(socketID);
-        io.to(oldRoom).emit('leaveUser', user.nick);
-        if(oldRoom==='main'){
-            io.to('main').emit('getListData', this.getAlls());
-        }
+        io.to(oldRoom).emit('postChat', {
+            type: 'leave',
+            user: user.nick,
+            msg: ''
+        });
 
         //접속정보목록에서도 제거해준다.
         this._userList = this._userList.filter(v => v.socket_id !== socketID);
+        //로비의 모두에게 최신화
+        io.to('main').emit('getListData', this.getAlls());
+
     }
     whereAmI(socket_id: string) {
         //console.log(socket.rooms); {<socket-id>,'room'};

@@ -61,12 +61,12 @@ function Chat() {
                     <span className={style.chat_enter_id}>{item.user}</span>
                     <span>님이 입장하셨습니다.</span>
                   </div>
-                ) : (
+                ) : item.type === 'chat' ? (
                   <div key={idx} className={style.chat_msg}>
                     <span className={style.chat_id}>{item.user}</span>
                     <span>: {item.msg}</span>
                   </div>
-                );
+                ) : null;
               })}
             </div>
           </div>

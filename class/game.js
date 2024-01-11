@@ -1,20 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Game = void 0;
-var defaultSetting = {
-    lang: 0,
-    max: 8,
-    limit: 60,
-    round: 3,
-    useCustom: false,
-    customs: [],
-    owner: '',
-    hintType: 0,
-    topicType: 0
-};
 var Room = /** @class */ (function () {
     function Room(id, title, maxUser, password, number) {
-        this._setting = defaultSetting;
+        this._setting = {
+            lang: 0,
+            max: 8,
+            limit: 60,
+            round: 3,
+            useCustom: false,
+            customs: [],
+            owner: '',
+            hintType: 0,
+            topicType: 0
+        };
         this._status = 0;
         this._timer = 0;
         this._users = [];
@@ -77,7 +76,7 @@ var Room = /** @class */ (function () {
         return true;
     };
     Room.prototype.canJoin = function () {
-        return this._setting.max === -1 || this._setting.max <= this._users.length;
+        return this._setting.max === -1 || this._setting.max > this._users.length;
     };
     Object.defineProperty(Room.prototype, "users", {
         get: function () { return this._users; },
@@ -114,7 +113,8 @@ var Game = /** @class */ (function () {
         this._roomNumber = 1;
         this._roomList = [];
         this._userList = [];
-        this.createRoom('main', '로비', -1, '');
+        this.createRoom('main', '로비', 9, '');
+        this.createRoom('test', '테스트', 8, '');
     }
     //방생성
     Game.prototype.createRoom = function (id, title, maxUser, password) {
@@ -153,9 +153,18 @@ var Game = /** @class */ (function () {
                     //소켓 자체 방에서 나가주고
                     socket.leave(v);
                     var r = _this.getRoomById(v);
-                    //개별로 관리하는 목록에서도 나가준다.
-                    r === null || r === void 0 ? void 0 : r.delUserBySocketID(socket.id);
-                    io.to(v).emit('leaveUser', user_1.nick);
+                    if (r) {
+                        //개별로 관리하는 목록에서도 나가준다.
+                        r.delUserBySocketID(socket.id);
+                        //모든 인원이 나갔으면 방을 삭제한다.
+                        // if (r.users.length === 0) {
+                        if (r.users.length === 0 && r.id !== 'test') { //테스트방이 아닐때만 삭제.
+                            _this.deleteRoom(v);
+                        }
+                        else {
+                            io.to(v).emit('leaveUser', user_1.nick);
+                        }
+                    }
                 });
                 //소켓 자체 join처리
                 socket.join(location);
@@ -176,18 +185,9 @@ var Game = /** @class */ (function () {
                     user: user_1.nick,
                     msg: ''
                 });
-                //로비일 경우 로비의 모두에게 최신화 시켜준다.
-                if (location === 'main') {
-                    io.to('main').emit('getListData', this.getAlls());
-                }
+                //로비의 모두에게 최신화 시켜준다.
+                io.to('main').emit('getListData', this.getAlls());
                 return true;
-            }
-            else {
-                //유효하지 않은 방이면
-                //main으로?
-                //방생성 후 입장?
-                //무작위 방 입장?
-                //지금은 false; 처리
             }
             return false;
         }
@@ -212,12 +212,15 @@ var Game = /** @class */ (function () {
         var r = this.getRoomById(oldRoom);
         //개별로 관리하는 목록에서도 나가준다.
         r === null || r === void 0 ? void 0 : r.delUserBySocketID(socketID);
-        io.to(oldRoom).emit('leaveUser', user.nick);
-        if (oldRoom === 'main') {
-            io.to('main').emit('getListData', this.getAlls());
-        }
+        io.to(oldRoom).emit('postChat', {
+            type: 'leave',
+            user: user.nick,
+            msg: ''
+        });
         //접속정보목록에서도 제거해준다.
         this._userList = this._userList.filter(function (v) { return v.socket_id !== socketID; });
+        //로비의 모두에게 최신화
+        io.to('main').emit('getListData', this.getAlls());
     };
     Game.prototype.whereAmI = function (socket_id) {
         //console.log(socket.rooms); {<socket-id>,'room'};
