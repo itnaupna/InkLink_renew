@@ -3,18 +3,48 @@ import style from './CanvasPart.module.css';
 import CanvasToolbar from './CanvasToolbar';
 import Popup1 from './Popup1';
 import { useRecoilState } from 'recoil';
-import { canvasStateAtom } from '../../../recoil/canvas';
+import { canvasStateAtom, phaseTimerAtom, popupStateAtom } from '../../../recoil/canvas';
 import { CanvasLogs, c2h, floodFill } from '../../../api/canvas';
 import Popup2 from './Popup2';
+import Popup3 from './Popup3';
+import Popup4 from './Popup4';
+import Popup5 from './Popup5';
 
 
 const CanvasPart = () => {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [cs, setCS] = useRecoilState(canvasStateAtom);
-    const [cvLogs, setCvLogs] = useState<CanvasLogs>();
     const drawingData = useRef<any>([]);
-    
+    const phaseTimerRef = useRef<HTMLDivElement>(null);
+    const [cs, setCS] = useRecoilState(canvasStateAtom);
+    const [popupState, setPopupState] = useRecoilState(popupStateAtom);
+    const [phaseTimer, setPhaseTimer] = useRecoilState(phaseTimerAtom);
+    const [cvLogs, setCvLogs] = useState<CanvasLogs>();
+    // const [popupString, setPopupString] = useState(`Popup${popupState}`);
+    const [eTime, setETime] = useState(0);
+    useEffect(() => {
+        // console.log(phaseTimer);
+        if (phaseTimer === 0)
+            phaseTimerRef.current!.style.width = `0%`;
+        else
+            setETime(phaseTimer);
+    }, [phaseTimer]);
+
+    useEffect(() => {
+        // console.log(eTime, phaseTimer);
+        if (eTime - 1 < 0) {
+            setPhaseTimer(0);
+            return;
+        }
+        phaseTimerRef.current!.style.width = `${eTime / phaseTimer * 100}%`;
+
+        setTimeout(() => {
+
+            setETime(eTime - 1);
+        }, 1000);
+    }, [eTime]);
+
+    // useEffect(() => { setPopupString(`Popup${popupState}`) }, [popupState]);
     useEffect(() => {
 
         const canvas = canvasRef.current!;
@@ -22,18 +52,23 @@ const CanvasPart = () => {
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
 
-        const flushData = setInterval(()=>{
-            if(drawingData.current.length>0){
+        const flushData = setInterval(() => {
+            if (drawingData.current.length > 0) {
                 console.log(JSON.stringify(drawingData.current));
                 drawingData.current.length = 0;
             }
-        },50);
+        }, 50);
+
+
 
         return () => {
             clearInterval(flushData);
+            // clearInterval(phaseTimerID);
         }
 
     }, []);
+
+
 
     useEffect(() => {
         const canvas = canvasRef.current!;
@@ -80,7 +115,7 @@ const CanvasPart = () => {
             }
     }, [cs.isDrawing])
 
-    const pushDrawingData = (data:any) =>{
+    const pushDrawingData = (data: any) => {
         drawingData.current.push(data);
         //[0,[툴,[데이터]]]
         //붓 : [0,[0,[0,x,y,color,width]]]
@@ -89,7 +124,7 @@ const CanvasPart = () => {
         //지2: [0,[1,[1,x,y]]]
         //통 : [0,[2,[x,y,color,width]]]
         //텅 : [0,[3]]
-        
+
     }
 
     const startDraw = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent> | React.TouchEvent) => {
@@ -112,7 +147,7 @@ const CanvasPart = () => {
                 floodFill(ctx, x, y, c2h(cs.color));
                 cvLogs?.logDrawing();
             } else {
-                pushDrawingData([0,[x, y, cs.color, cs.lineWidth, cs.tool]]);
+                pushDrawingData([0, [x, y, cs.color, cs.lineWidth, cs.tool]]);
                 // alert('dd');
                 ctx.beginPath();
                 ctx.moveTo(x, y);
@@ -165,7 +200,7 @@ const CanvasPart = () => {
         const ratio = canvas.clientWidth / canvas.width;
         const x = offsetX / ratio;
         const y = offsetY / ratio;
-        
+
         pushDrawingData([1, x, y, cs.color, cs.lineWidth, cs.tool]);
         ctx.lineTo(x, y);
         ctx.stroke();
@@ -183,8 +218,16 @@ const CanvasPart = () => {
 
     return (
         <div className={style.wrapper}>
-            {/* <Popup1/> */}
-            <Popup2/>
+            <div className={style.timer} ref={phaseTimerRef} />
+            {/* <Popup5 /> */}
+            {
+                popupState === 1 ? <Popup1 /> :
+                    popupState === 2 ? <Popup2 /> :
+                        popupState === 3 ? <Popup3 /> :
+                            popupState === 4 ? <Popup4 /> :
+                                popupState === 5 ? <Popup5 /> :
+                                    null
+            }
             <canvas className={style.canvas} width={800} height={600} ref={canvasRef}
                 onMouseDown={startDraw}
                 onMouseUp={stopDraw}

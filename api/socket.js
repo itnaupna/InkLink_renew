@@ -1,5 +1,4 @@
 const { Server } = require('socket.io');
-const { roomSocket } = require('./roomSocket');
 const { chatController } = require('../controllers/Chat');
 const { roomController } = require('../controllers/Room');
 const { Game } = require('../class/game');
@@ -8,6 +7,7 @@ const game = new Game();
 const mongo = require('../db/dbcon');
 const { ObjectId } = require('mongodb');
 const { generateRaw } = require('./etc');
+const { InGameController } = require('../controllers/InGame');
 
 const socket = async (server) => {
   const io = new Server(server, {
@@ -21,7 +21,7 @@ const socket = async (server) => {
 
   io.on('connection', async (socket) => {
     // console.log('Socket >>> Connected ' + socket.id + "\n" + JSON.stringify(socket.handshake.query));
-    
+
 
     let v = await verify(socket.handshake.query.eong);
     if (!v) {
@@ -40,12 +40,16 @@ const socket = async (server) => {
         socket_id: socket.id,
         location: game.getRoomById(room) ? room : 'main'
       };
-      console.log(`${socket.id} + ${data.location}`);
+      // console.log(`${socket.id} + ${data.location}`);
       game.connectUser(data);
-      game.changeLocation(io,socket,data.location);
+      const newRoom = game.changeLocation(io, socket, data.location);
       // socket.join(data.location);
       socket.emit('initSocket', { id: data.socket_id, loc: data.location });
-      
+      if (data.location !== 'main') {
+        // console.log(newRoom.forIgs());
+        socket.emit('igs', newRoom.forIgs());
+      }
+
     }
 
     socket.on('disconnect', () => {
@@ -53,28 +57,30 @@ const socket = async (server) => {
       game.disconnectUser(io, socket.id);
     });
 
+    InGameController.socket(socket, io, game); 
     chatController.socket(socket, io, game);
     // roomController.socket(socket, io, roomList, connectedUsers);
-    // roomController.sk(socket, io, game);
-  });
-};
+    // roomController.sk(socket, io, game); 
+  });  
+}; 
 
 const verify = async (eong) => {
   try {
     // console.log('verify >> ' +  eong);
-    let decode = generateRaw(eong);
+    let decode = generateRaw(eong); 
     let db = await mongo.connect('member');
     let res = await db.findOne({ _id: new ObjectId(generateRaw(eong)) });
-    // console.log(res);
+    // console.log(res); 
 
     return res || false;
   } catch (ex) {
     console.log(ex);
     return false;
   } finally {
-    // console.log('verify >> ' +  eong);
+    // console.log('verify >> ' +  eong); 
     await mongo.close();
   }
 };
 
 module.exports = socket;
+     

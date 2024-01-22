@@ -11,7 +11,12 @@
     font-size: 1.7rem;
     font-weight: bolder;
     border-left: 1px solid #ccc;
+    justify-content: center;
+    align-items: center;
 }
 .allScore{
     margin-right: 0.5rem;
+}
+.owner{
+    color:#88f;
 }

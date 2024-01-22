@@ -16,16 +16,7 @@ exports.chatController = {
       //닉없으면 무효
       if (!sender) return;
       
-      /*
-      room !== 'main' 이면 인게임 채팅이므로
-      세가지 로직 처리 필요
-      1. 정답일경우 정답처리 및 정답맞췄다는 패킷보내줌
-      2. 한글자 차이일경우 까비 아깝숑 처리 및 당사자한테만 ㄲㅂ 보내줌
-      3. 출제자일 경우 채팅금지.
-      */
-
-
-      //마지막으로 채팅을 해당 방에 속한 모든 유저에게 뿌려준다.
+      //채팅을 해당 방에 속한 모든 유저에게 뿌려준다.
       io.to(room).emit('postChat', {
         type: 'chat',
         user: sender,
@@ -42,13 +33,14 @@ exports.chatController = {
     //   }
     // });
 
-    // socket.on('lobbyMsg', (data) => {
+    // socket.on('lobbyMsg', (data) => {   
     //   if (!data.msg || data.msg.length > 60) {
     //     return;
     //   }
     //   chat.sendMessage(data.msg);
     //   console.log(`${socket.id} ${chat.user} >> ${data.msg}`);
     //   io.to(chat.location).emit('broadcastLobby', chat);
-    // });
-  },
-};
+    // }); 
+  },  
+}; 
+ 

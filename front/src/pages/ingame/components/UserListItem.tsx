@@ -1,14 +1,19 @@
 import React from 'react';
 import style from './UserListItem.module.css';
-const UserListItem = () => {
+const UserListItem = (
+    {
+        nick, total, current, isOwner
+    }: {
+        nick: string, total: number, current: number, isOwner:boolean
+    }) => {
     return (
         <div className={style.Wrapper}>
             <img className={style.userImg} alt='userImg' width={48} height={48} />
             <div className={style.infoWrapper}>
-                <div>닉네임은최대몇글자까지될까요</div>
+                <div className={isOwner ? style.owner : ''}>{nick}</div>
                 <div>
-                    <span className={style.allScore}>1,234,567,890</span>
-                    <span className={style.thisScore}>+999</span>
+                    <span className={style.allScore}>{total}</span>
+                    <span className={style.thisScore}>+{current}</span>
                 </div>
             </div>
 

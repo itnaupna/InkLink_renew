@@ -54,7 +54,7 @@ const CanvasToolbar = (a: any) => {
     }
 
     return (
-        <div className={style.wrapper}>
+        <div className={style.wrapper} style={{pointerEvents:`${cs.isDrawing ? 'none' : 'auto'}`}}>
             <div className={style.tools}>
                 <div className={`${style.toolitem} ${style.toolSelected}`} onClick={(e) => { handleToolChange(e, 0) }}><img src={`${imgPrefix}brush.png`} alt='brush' width={40} /></div>
                 <div className={style.toolitem} onClick={(e) => { handleToolChange(e, 1) }}><img src={`${imgPrefix}eraser.png`} alt='brush' width={40} /></div>

@@ -14,3 +14,14 @@
     z-index: 1;
     /* image-rendering: pixelated; */
 }
+.timer{
+    position: absolute;
+    top:0px;
+    left:0px;
+    width:0%;
+    height:0.5rem;
+    z-index: 10;
+    background-color: blue;
+    transition: width linear 1s;
+    pointer-events: none;
+}

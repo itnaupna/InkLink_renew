@@ -15,7 +15,31 @@ const canvasStateAtom = atom({
     default:canvasState
 });
 
+const popupStateAtom = atom({
+    key:'popupStateAtom',
+    default:2
+});
+
+const topicsAtom = atom<string[]>({
+    key:'topicsAtom',
+    default:[]
+});
+
+const voteTopicsAtom = atom<number[]>({
+    key:'voteTopicsAtom',
+    default:[]
+});
+
+const phaseTimerAtom = atom<number>({
+    key:'phaseTimerAtom',
+    default:0
+});
+
+const phaseMsgAtom = atom<string>({
+    key:'phaseMsgAtom',
+    default:''
+});
 
 
 
-export {canvasStateAtom,};
+export {canvasStateAtom,popupStateAtom,topicsAtom,voteTopicsAtom,phaseTimerAtom,phaseMsgAtom,};
